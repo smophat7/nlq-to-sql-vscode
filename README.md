@@ -1,6 +1,6 @@
 # nlq-to-sql README
 
-This is the README for your extension "nlq-to-sql". After writing up a brief description, we recommend including the following sections.
+VS Code extension for converting Natural Language Queries to SQL using LLM APIs.
 
 ## Features
 

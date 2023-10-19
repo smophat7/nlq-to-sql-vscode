@@ -1,6 +1,7 @@
 {
   "name": "nlq-to-sql",
   "displayName": "NLQ-to-SQL",
+  "publisher": "SpencerMoffat",
   "description": "Convert Natural Language Queries to SQL using LLM APIs",
   "version": "0.0.1",
   "engines": {
@@ -14,8 +15,25 @@
   "contributes": {
     "commands": [
       {
-        "command": "nlq-to-sql.helloWorld",
-        "title": "Hello World"
+        "command": "nlq-to-sql.generateSql",
+        "title": "Generate SQL w/ AI",
+        "when": "editorHasSelection"
+      },
+      {
+        "command": "nlq-to-sql.modifySql",
+        "title": "Modify SQL w/ AI"
+      }
+    ],
+    "configuration": [
+      {
+        "title": "NLQ-to-SQL",
+        "properties": {
+          "nlq-to-sql.apiKey": {
+            "type": "string",
+            "default": "",
+            "description": "OpenAI API Key"
+          }
+        }
       }
     ]
   },
@@ -31,6 +49,7 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
     "@types/vscode": "^1.83.0",
@@ -44,5 +63,9 @@
     "typescript": "^5.1.6",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.0.0",
+    "openai": "^4.12.3"
   }
 }
