@@ -21,17 +21,17 @@ export function activate(context: vscode.ExtensionContext) {
       databaseExplorerTreeViewProvider
     );
 
-  const setDatabaseCommand = vscode.commands.registerCommand(
+  const addDatabaseCommand = vscode.commands.registerCommand(
     "nlq-to-sql.addDatabase",
     async () => {
-      addDatabase(databaseInfoManager);
+      await addDatabase(databaseInfoManager);
     }
   );
 
   const generateSqlCommand = vscode.commands.registerCommand(
     "nlq-to-sql.generateSql",
     async () => {
-      generateSql(databaseInfoManager);
+      await generateSql(databaseInfoManager);
     }
   );
 
@@ -44,15 +44,15 @@ export function activate(context: vscode.ExtensionContext) {
 
   const removeDatabaseCommand = vscode.commands.registerCommand(
     "nlq-to-sql.removeDatabase",
-    (databaseInfoTreeItem: DatabaseInfoTreeItem) => {
-      removeDatabase(databaseInfoTreeItem, databaseInfoManager);
+    async (databaseInfoTreeItem: DatabaseInfoTreeItem) => {
+      await removeDatabase(databaseInfoTreeItem, databaseInfoManager);
     }
   );
 
   context.subscriptions.push(
     registerDatabaseExplorerTreeViewProvider,
+    addDatabaseCommand,
     generateSqlCommand,
-    setDatabaseCommand,
     refreshDatabaseExplorerCommand,
     removeDatabaseCommand
   );
