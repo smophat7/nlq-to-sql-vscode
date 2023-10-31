@@ -33,12 +33,12 @@ export class ActiveTableContextTreeViewProvider
     element?: DatabaseTreeViewItem | undefined
   ): vscode.ProviderResult<DatabaseTreeViewItem[]> {
     if (element === undefined) {
-      let databaseMap = this.databaseInfoManager.databases;
+      let databaseMap = this.databaseInfoManager.getDatabases();
       if (!databaseMap) {
         return [];
       }
 
-      const activeDatabaseId = this.databaseInfoManager.activeDatabaseId;
+      const activeDatabaseId = this.databaseInfoManager.getActiveDatabaseId();
       if (!activeDatabaseId) {
         return []; // TODO: How to handle if no active database?
       }

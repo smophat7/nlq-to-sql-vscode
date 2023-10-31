@@ -5,11 +5,14 @@ import { addDatabase } from "./command/addDatabase";
 import { DatabaseExplorerTreeViewProvider } from "./treeView/DatabaseExplorerTreeViewProvider";
 import {
   DatabaseInfoTreeItem,
+  FolderTreeItem,
   TableContextTreeItem,
 } from "./treeView/DatabaseTreeViewItem";
 import { removeDatabase } from "./command/removeDatabase";
 import { selectTableContext } from "./command/selectTableContext";
 import { ActiveTableContextTreeViewProvider } from "./treeView/ActiveTableContextTreeViewProvider";
+import { addTablesToContext } from "./command/addTablesToContext";
+import { addTableContext } from "./command/addTableContext";
 
 export function activate(context: vscode.ExtensionContext) {
   const databaseInfoManager = new DatabaseInfoManager(context.workspaceState);
@@ -70,6 +73,20 @@ export function activate(context: vscode.ExtensionContext) {
     "nlq-to-sql.selectTableContext",
     async (tableContextTreeItem: TableContextTreeItem) => {
       await selectTableContext(tableContextTreeItem, databaseInfoManager);
+    }
+  );
+
+  const addTablesToContextCommand = vscode.commands.registerCommand(
+    "nlq-to-sql.addTablesToContext",
+    async (tableContexTreeItem: TableContextTreeItem) => {
+      await addTablesToContext(tableContexTreeItem, databaseInfoManager);
+    }
+  );
+
+  const addTableContextCommand = vscode.commands.registerCommand(
+    "nlq-to-sql.addTableContext",
+    async (folderTreeItem: FolderTreeItem) => {
+      await addTableContext(folderTreeItem, databaseInfoManager);
     }
   );
 

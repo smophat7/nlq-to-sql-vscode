@@ -33,15 +33,18 @@ export class DatabaseTreeViewItem extends vscode.TreeItem {
 export class FolderTreeItem extends DatabaseTreeViewItem {
   constructor(
     label: string,
-    children: TableInfoTreeItem[] | TableContextTreeItem[]
+    children: TableInfoTreeItem[] | TableContextTreeItem[],
+    databaseId: string,
+    contextValue: string
   ) {
     super(
       label,
       vscode.TreeItemCollapsibleState.Collapsed,
       children,
-      undefined,
+      databaseId, // In a FolderTreeItem, the databaseItemId is the database id to which the folder belongs
       new vscode.ThemeIcon(constants.FOLDER_ICON_CODE)
     );
+    this.contextValue = contextValue;
   }
 }
 
@@ -115,8 +118,18 @@ export function convertDatabaseInfoToDatabaseExplorerItem(
     convertTableContextToTableContextTreeItem(tableContext, tableInfoTreeItems)
   );
   let folderTreeItems: FolderTreeItem[] = [
-    new FolderTreeItem("Tables", tableInfoTreeItems),
-    new FolderTreeItem("Contexts", tableContextTreeItems),
+    new FolderTreeItem(
+      "Tables",
+      tableInfoTreeItems,
+      databaseInfo.databaseId,
+      "tablesFolder"
+    ),
+    new FolderTreeItem(
+      "Contexts",
+      tableContextTreeItems,
+      databaseInfo.databaseId,
+      "contextsFolder"
+    ),
   ];
   return new DatabaseInfoTreeItem(
     databaseInfo.name,

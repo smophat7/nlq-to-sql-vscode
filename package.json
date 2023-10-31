@@ -43,6 +43,16 @@
         "command": "nlq-to-sql.selectTableContext",
         "title": "NLQ-to-SQL: Select Table Context",
         "icon": "$(star)"
+      },
+      {
+        "command": "nlq-to-sql.addTablesToContext",
+        "title": "NLQ-to-SQL: Add Tables to Context",
+        "icon": "$(add)"
+      },
+      {
+        "command": "nlq-to-sql.addTableContext",
+        "title": "NLQ-to-SQL: Add Table Context",
+        "icon": "$(add)"
       }
     ],
     "configuration": [
@@ -140,6 +150,16 @@
         {
           "command": "nlq-to-sql.selectTableContext",
           "when": "view == nlq-to-sql.databaseExplorer && viewItem == tableContext",
+          "group": "inline"
+        },
+        {
+          "command": "nlq-to-sql.addTablesToContext",
+          "when": "view == nlq-to-sql.databaseExplorer && viewItem == tableContext",
+          "group": "inline"
+        },
+        {
+          "command": "nlq-to-sql.addTableContext",
+          "when": "view == nlq-to-sql.databaseExplorer && viewItem == contextsFolder",
           "group": "inline"
         }
       ]

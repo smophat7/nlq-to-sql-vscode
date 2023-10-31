@@ -30,7 +30,7 @@ export class DatabaseExplorerTreeViewProvider
     element?: DatabaseTreeViewItem | undefined
   ): vscode.ProviderResult<DatabaseTreeViewItem[]> {
     if (element === undefined) {
-      let databaseMap = this.databaseInfoManager.databases;
+      let databaseMap = this.databaseInfoManager.getDatabases();
       if (!databaseMap) {
         return [];
       }

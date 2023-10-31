@@ -20,25 +20,26 @@ export async function removeDatabase(
   }
 
   // Get user confirmation
-  await vscode.window
-    .showQuickPick(
-      [
-        {
-          label: "Yes",
-          description:
-            "Permanently remove record of the selected database from NLQ-to-SQL extension",
-        },
-        { label: "Cancel" },
-      ],
-      { placeHolder: "Are you sure you want to remove the database?" }
-    )
-    .then((value) => {
-      if (value?.label === "Yes") {
-        databaseInfoManager.removeDatabase(databaseId);
-      } else {
-        vscode.window.showInformationMessage("Request canceled");
-      }
-    });
+  const quickPickLabels = [
+    {
+      label: "Yes",
+      description:
+        "Permanently remove record of the selected database from NLQ-to-SQL extension",
+    },
+    { label: "Cancel" },
+  ];
+  const userSelection = await vscode.window.showQuickPick(quickPickLabels, {
+    placeHolder: "Are you sure you want to remove the database?",
+  });
+  if (userSelection) {
+    if (userSelection?.label === "Yes") {
+      await databaseInfoManager.removeDatabase(databaseId);
+    } else {
+      vscode.window.showInformationMessage("Request canceled");
+    }
+  } else {
+    return;
+  }
 
   vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
   vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableContext");

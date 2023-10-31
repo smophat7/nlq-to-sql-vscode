@@ -26,12 +26,12 @@ export class DatabaseInfoManager {
    * The active database is the database that is currently selected in the database explorer tree view.
    * The active database is used as the basis for NLQ-to-SQL queries.
    */
-  public get activeDatabaseId(): string | undefined {
+  public getActiveDatabaseId(): string | undefined {
     return this.workspaceState.get(DatabaseInfoManager.activeDatabaseIdKey);
   }
 
-  public set activeDatabaseId(databaseId: string | undefined) {
-    this.workspaceState.update(
+  public async setActiveDatabaseId(databaseId: string | undefined) {
+    await this.workspaceState.update(
       DatabaseInfoManager.activeDatabaseIdKey,
       databaseId
     );
@@ -40,7 +40,7 @@ export class DatabaseInfoManager {
   /**
    * The map of database ids to database information.
    */
-  public get databases(): Map<string, DatabaseInfo> | undefined {
+  public getDatabases(): Map<string, DatabaseInfo> | undefined {
     const databasesArray: [string, DatabaseInfo][] | undefined =
       this.workspaceState.get(DatabaseInfoManager.databasesKey);
     return databasesArray
@@ -48,22 +48,21 @@ export class DatabaseInfoManager {
       : undefined;
   }
 
-  public set databases(databases: Map<string, DatabaseInfo> | null) {
+  public async setDatabases(databases: Map<string, DatabaseInfo> | null) {
     let databasesArray = undefined;
     if (databases) {
       databasesArray = Array.from(databases.entries());
     }
-    this.workspaceState
-      .update(DatabaseInfoManager.databasesKey, databasesArray)
-      .then(() => {
-        console.log("Workspace databases set successfully");
-      });
+    await this.workspaceState.update(
+      DatabaseInfoManager.databasesKey,
+      databasesArray
+    );
   }
 
   /**
    * The map of query ids to query information. Used for storing generated query history.
    */
-  public get queryHistory(): Map<string, QueryInfo> | undefined {
+  public getQueryHistory(): Map<string, QueryInfo> | undefined {
     return (
       (this.workspaceState.get(DatabaseInfoManager.queryHistoryKey) as Map<
         string,
@@ -72,7 +71,7 @@ export class DatabaseInfoManager {
     );
   }
 
-  public set queryHistory(queryHistory: Map<string, QueryInfo> | null) {
+  public async setQueryHistory(queryHistory: Map<string, QueryInfo> | null) {
     this.workspaceState.update(
       DatabaseInfoManager.queryHistoryKey,
       queryHistory ? Array.from(queryHistory.entries()) : undefined
@@ -85,7 +84,10 @@ export class DatabaseInfoManager {
    * @param filePath The path to the database file.
    * @param tables Information about the tables in the database. Converted to TableInfo.
    */
-  public addDatabase(filePath: string, tables: TableInfo[]): void {
+  public async addDatabase(
+    filePath: string,
+    tables: TableInfo[]
+  ): Promise<void> {
     const tableContext: TableContextInfo = {
       tableContextId: uuidv4(),
       tableContextName: "All Tables",
@@ -96,18 +98,38 @@ export class DatabaseInfoManager {
       databaseId: uuidv4(),
       path: filePath,
       name: path.basename(filePath),
-      activeGroupId: tableContext.tableContextId,
+      activeContext: tableContext.tableContextId,
       tables: tables,
       tableContexts: [tableContext],
     };
 
-    let databaseMap = this.databases;
+    let databaseMap = this.getDatabases();
     if (!databaseMap) {
       databaseMap = new Map<string, DatabaseInfo>();
     }
     databaseMap.set(database.databaseId, database);
-    this.databases = databaseMap;
-    this.activeDatabaseId = database.databaseId;
+    await this.setDatabases(databaseMap);
+    await this.setActiveDatabaseId(database.databaseId);
+  }
+
+  /**
+   * Updates the database in the workspace state.
+   * Throws an error if the database does not exist or if there are no databases in the workspace state.
+   *
+   * @param database The database to update.
+   */
+  async updateDatabase(database: DatabaseInfo) {
+    let databaseMap = this.getDatabases();
+    if (!databaseMap) {
+      throw new Error("No databases found in workspace state.");
+    }
+    if (!databaseMap.has(database.databaseId)) {
+      throw new Error(
+        `No database found in workspace state with id ${database.databaseId}.`
+      );
+    }
+    databaseMap.set(database.databaseId, database);
+    await this.setDatabases(databaseMap);
   }
 
   /**
@@ -116,8 +138,8 @@ export class DatabaseInfoManager {
    *
    * @param databaseId The id of the database to remove.
    */
-  public removeDatabase(databaseId: string) {
-    let databaseMap = this.databases;
+  public async removeDatabase(databaseId: string) {
+    let databaseMap = this.getDatabases();
     if (!databaseMap) {
       vscode.window.showErrorMessage(
         "Error: No databases found in workspace state."
@@ -132,9 +154,9 @@ export class DatabaseInfoManager {
       return;
     }
 
-    this.databases = databaseMap;
-    if (this.activeDatabaseId === databaseId) {
-      this.activeDatabaseId = undefined;
+    await this.setDatabases(databaseMap);
+    if (this.getActiveDatabaseId() === databaseId) {
+      await this.setActiveDatabaseId(undefined);
     }
 
     vscode.window.showInformationMessage(
@@ -149,11 +171,12 @@ export class DatabaseInfoManager {
    * @returns
    */
   public getIfDatabaseExists(selectedDatabasePath: string): boolean {
-    if (!this.databases) {
+    const databases = this.getDatabases();
+    if (!databases) {
       return false;
     }
-    const databases = Array.from(this.databases.values());
-    const databaseIndex = databases.findIndex(
+    const databasesArray = Array.from(databases.values());
+    const databaseIndex = databasesArray.findIndex(
       (database) => database.path === selectedDatabasePath
     );
     return databaseIndex !== -1;
@@ -170,7 +193,7 @@ export class DatabaseInfoManager {
     tableContextId: string,
     databaseId: string
   ): Promise<void> {
-    const databaseMap = this.databases;
+    const databaseMap = this.getDatabases();
     if (!databaseMap) {
       throw new Error("No databases found in workspace state.");
     }
@@ -189,10 +212,10 @@ export class DatabaseInfoManager {
       );
     }
 
-    database.activeGroupId = tableContext.tableContextId;
+    database.activeContext = tableContext.tableContextId;
     databaseMap.set(databaseId, database);
-    this.databases = databaseMap;
-    this.activeDatabaseId = databaseId;
+    await this.setDatabases(databaseMap);
+    await this.setActiveDatabaseId(databaseId);
   }
 
   /**
@@ -202,7 +225,7 @@ export class DatabaseInfoManager {
    * @returns The id of the database that contains the table context with the given id or undefined if no database contains the table context or no databases exist.
    */
   getDatabaseIdByTableContextId(tableContextId: string): string | undefined {
-    const databaseMap = this.databases;
+    const databaseMap = this.getDatabases();
     if (!databaseMap) {
       return;
     }
@@ -223,7 +246,7 @@ export class DatabaseInfoManager {
    * @param activeDatabaseId The id of the database.
    */
   getTableInfo(tableId: any, activeDatabaseId: string): TableInfo {
-    const databaseMap = this.databases;
+    const databaseMap = this.getDatabases();
     if (!databaseMap) {
       throw new Error("No databases found in workspace state.");
     }
@@ -248,7 +271,7 @@ export class DatabaseInfoManager {
    * @param databaseId The id of the database.
    */
   getActiveTableContextInfo(databaseId: string): TableContextInfo {
-    const databaseMap = this.databases;
+    const databaseMap = this.getDatabases();
     if (!databaseMap) {
       throw new Error("No databases found in workspace state.");
     }
@@ -259,7 +282,7 @@ export class DatabaseInfoManager {
       );
     }
     const tableContext = database.tableContexts.find(
-      (tableContext) => tableContext.tableContextId === database.activeGroupId
+      (tableContext) => tableContext.tableContextId === database.activeContext
     );
     if (!tableContext) {
       throw new Error(
@@ -270,36 +293,65 @@ export class DatabaseInfoManager {
   }
 
   /**
+   * Adds a table context to the database with the given id.
+   *
+   * @param databaseId The id of the database to add the table context to.
+   * @param name The name of the table context.
+   */
+  async addTableContext(databaseId: string, name: string) {
+    const databaseMap = this.getDatabases();
+    if (!databaseMap) {
+      throw new Error("No databases found in workspace state.");
+    }
+    const database = databaseMap.get(databaseId);
+    if (!database) {
+      throw new Error(
+        `No database found in workspace state with id ${databaseId}.`
+      );
+    }
+
+    const tableContext: TableContextInfo = {
+      tableContextId: uuidv4(),
+      tableContextName: name,
+      tableIds: [],
+    };
+    database.tableContexts.push(tableContext);
+    databaseMap.set(databaseId, database);
+    await this.setDatabases(databaseMap);
+  }
+
+  /**
    * Returns one string of all the active database's active table context's CREATE statements.
    * Throws an error if there is no active database, active group, or tables in the active group.
    * TODO: Make more fault tolerant.
    */
   public getActiveGroupSchema(): string {
-    if (!this.activeDatabaseId) {
+    const activeDatabaseId = this.getActiveDatabaseId();
+    if (!activeDatabaseId) {
       throw new Error("No active database.");
     }
-    if (!this.databases) {
+    const databaseMap = this.getDatabases();
+    if (!databaseMap) {
       throw new Error("No databases found in workspace state.");
     }
-    const activeDatabase: DatabaseInfo | undefined = this.databases.get(
-      this.activeDatabaseId
-    );
+    const activeDatabase: DatabaseInfo | undefined =
+      databaseMap.get(activeDatabaseId);
     if (!activeDatabase) {
       throw new Error(
         "No active database found by workspace state's activeDatabaseId."
       );
     }
-    const activeGroupId = activeDatabase.activeGroupId;
-    if (!activeGroupId) {
+    const activeContext = activeDatabase.activeContext;
+    if (!activeContext) {
       throw new Error("No active group.");
     }
     const activeGroup: TableContextInfo | undefined =
       activeDatabase.tableContexts.find(
-        (group: TableContextInfo) => group.tableContextId === activeGroupId
+        (group: TableContextInfo) => group.tableContextId === activeContext
       );
     if (!activeGroup) {
       throw new Error(
-        `No active group tables found in database with id ${activeDatabase.databaseId} and activeGroupId ${activeGroupId}.`
+        `No active group tables found in database with id ${activeDatabase.databaseId} and activeContext ${activeContext}.`
       );
     }
 
@@ -319,7 +371,7 @@ export class DatabaseInfoManager {
 
     if (activeGroupTables.length === 0) {
       throw new Error(
-        `No tables found in active group with id ${activeGroupId}.`
+        `No tables found in active group with id ${activeContext}.`
       );
     }
 

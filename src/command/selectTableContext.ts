@@ -41,6 +41,6 @@ export async function selectTableContext(
     return;
   }
 
-  await vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
-  await vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableContext");
+  vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
+  vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableContext");
 }

@@ -5,9 +5,9 @@ export type DatabaseInfo = {
   databaseId: string;
   name: string;
   path: string;
-  activeGroupId?: string;
+  activeContext?: string;
   tables: TableInfo[];
-  tableContexts: TableContextInfo[];
+  tableContexts: TableContextInfo[]; // TODO: Use map?
 };
 
 /**
