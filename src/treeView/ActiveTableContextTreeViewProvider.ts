@@ -37,20 +37,19 @@ export class ActiveTableContextTreeViewProvider
       if (!databaseMap) {
         return [];
       }
-
       const activeDatabaseId = this.databaseInfoManager.getActiveDatabaseId();
       if (!activeDatabaseId) {
         return []; // TODO: How to handle if no active database?
       }
-
       const database = databaseMap.get(activeDatabaseId);
       if (!database) {
         return []; // TODO: How to handle if no valid database?
       }
-
       const activeTableContextInfo =
         this.databaseInfoManager.getActiveTableContextInfo(activeDatabaseId);
-
+      if (!activeTableContextInfo) {
+        return []; // TODO: How to handle if no active table context?
+      }
       const tableIds = activeTableContextInfo.tableIds;
       if (!tableIds) {
         return []; // TODO: How to handle if no tables?

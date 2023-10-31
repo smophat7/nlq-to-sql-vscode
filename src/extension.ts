@@ -13,6 +13,7 @@ import { selectTableContext } from "./command/selectTableContext";
 import { ActiveTableContextTreeViewProvider } from "./treeView/ActiveTableContextTreeViewProvider";
 import { addTablesToContext } from "./command/addTablesToContext";
 import { addTableContext } from "./command/addTableContext";
+import { removeTableContext } from "./command/removeTableContext";
 
 export function activate(context: vscode.ExtensionContext) {
   const databaseInfoManager = new DatabaseInfoManager(context.workspaceState);
@@ -90,6 +91,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const removeTableContextCommand = vscode.commands.registerCommand(
+    "nlq-to-sql.removeTableContext",
+    async (tableContextTreeItem: TableContextTreeItem) => {
+      await removeTableContext(tableContextTreeItem, databaseInfoManager);
+    }
+  );
+
   context.subscriptions.push(
     registerDatabaseExplorerTreeViewProvider,
     registerActiveTableContextTreeViewProvider,
@@ -98,8 +106,11 @@ export function activate(context: vscode.ExtensionContext) {
     refreshDatabaseExplorerCommand,
     refreshActiveTableContextCommand,
     removeDatabaseCommand,
-    selectTableContextCommand
+    selectTableContextCommand,
+    addTablesToContextCommand,
+    addTableContextCommand,
+    removeTableContextCommand
   );
 }
 
-export function deactivate() {}
+export async function deactivate(): Promise<void> {}

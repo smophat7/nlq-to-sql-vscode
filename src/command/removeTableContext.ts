@@ -1,20 +1,21 @@
 import * as vscode from "vscode";
+
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { DatabaseInfoTreeItem } from "../treeView/DatabaseTreeViewItem";
+import { TableContextTreeItem } from "../treeView/DatabaseTreeViewItem";
 
 /**
- * Removes a database from the extension workspace state after user confirmation.
+ * Removes a table context from the extension workspace state after user confirmation.
  *
- * @param databaseInfoTreeItem
+ * @param tableContextTreeItem
  * @param databaseInfoManager
  */
-export async function removeDatabase(
-  databaseInfoTreeItem: DatabaseInfoTreeItem,
+export async function removeTableContext(
+  tableContextTreeItem: TableContextTreeItem,
   databaseInfoManager: DatabaseInfoManager
 ): Promise<void> {
-  const databaseId = databaseInfoTreeItem.databaseItemId;
-  if (!databaseId) {
-    vscode.window.showErrorMessage("Could not find database to remove");
+  const tableContextId = tableContextTreeItem.databaseItemId;
+  if (!tableContextId) {
+    vscode.window.showErrorMessage("Could not find table context to remove");
     return;
   }
 
@@ -23,16 +24,16 @@ export async function removeDatabase(
     {
       label: "Yes",
       description:
-        "Permanently remove record of the selected database from the NLQ-to-SQL extension",
+        "Permanently remove the selected table context from the NLQ-to-SQL extension",
     },
     { label: "Cancel" },
   ];
   const userSelection = await vscode.window.showQuickPick(quickPickLabels, {
-    placeHolder: "Are you sure you want to remove the database?",
+    placeHolder: "Are you sure you want to remove the context?",
   });
   if (userSelection) {
     if (userSelection?.label === "Yes") {
-      await databaseInfoManager.removeDatabase(databaseId);
+      await databaseInfoManager.removeTableContext(tableContextId);
     } else {
       vscode.window.showInformationMessage("Request canceled");
     }

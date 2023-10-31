@@ -26,33 +26,38 @@
       },
       {
         "command": "nlq-to-sql.removeDatabase",
-        "title": "NLQ-to-SQL: Remove Database",
+        "title": "Remove Database",
         "icon": "$(trash)"
       },
       {
         "command": "nlq-to-sql.refreshDatabaseExplorer",
-        "title": "NLQ-to-SQL: Refresh Database Explorer",
+        "title": "Refresh",
         "icon": "$(extensions-refresh)"
       },
       {
         "command": "nlq-to-sql.refreshActiveTableContext",
-        "title": "NLQ-to-SQL: Refresh Active Table Context",
+        "title": "Refresh",
         "icon": "$(extensions-refresh)"
       },
       {
         "command": "nlq-to-sql.selectTableContext",
-        "title": "NLQ-to-SQL: Select Table Context",
+        "title": "Select Table Context",
         "icon": "$(star)"
       },
       {
         "command": "nlq-to-sql.addTablesToContext",
-        "title": "NLQ-to-SQL: Add Tables to Context",
+        "title": "Add Tables to Context",
         "icon": "$(add)"
       },
       {
         "command": "nlq-to-sql.addTableContext",
         "title": "NLQ-to-SQL: Add Table Context",
         "icon": "$(add)"
+      },
+      {
+        "command": "nlq-to-sql.removeTableContext",
+        "title": "Remove Table Context",
+        "icon": "$(trash)"
       }
     ],
     "configuration": [
@@ -122,6 +127,26 @@
         {
           "command": "nlq-to-sql.removeDatabase",
           "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.selectTableContext",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.refreshActiveTableContext",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.refreshDatabaseExplorer",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.addTablesToContext",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.removeTableContext",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -160,6 +185,11 @@
         {
           "command": "nlq-to-sql.addTableContext",
           "when": "view == nlq-to-sql.databaseExplorer && viewItem == contextsFolder",
+          "group": "inline"
+        },
+        {
+          "command": "nlq-to-sql.removeTableContext",
+          "when": "view == nlq-to-sql.databaseExplorer && viewItem == tableContext",
           "group": "inline"
         }
       ]

@@ -267,29 +267,23 @@ export class DatabaseInfoManager {
 
   /**
    * Gets the table context information for the active table context of the database with the given id.
+   * Returns undfined if the database does not exist or if there is no active table context.
    *
    * @param databaseId The id of the database.
+   * @returns The table context information for the active table context of the database with the given id.
    */
-  getActiveTableContextInfo(databaseId: string): TableContextInfo {
+  getActiveTableContextInfo(databaseId: string): TableContextInfo | undefined {
     const databaseMap = this.getDatabases();
     if (!databaseMap) {
-      throw new Error("No databases found in workspace state.");
+      return;
     }
     const database = databaseMap.get(databaseId);
     if (!database) {
-      throw new Error(
-        `No database found in workspace state with id ${databaseId}.`
-      );
+      return;
     }
-    const tableContext = database.tableContexts.find(
+    return database.tableContexts.find(
       (tableContext) => tableContext.tableContextId === database.activeContext
     );
-    if (!tableContext) {
-      throw new Error(
-        `No active table context found in database with id ${databaseId}.`
-      );
-    }
-    return tableContext;
   }
 
   /**
@@ -316,6 +310,47 @@ export class DatabaseInfoManager {
       tableIds: [],
     };
     database.tableContexts.push(tableContext);
+    databaseMap.set(databaseId, database);
+    await this.setDatabases(databaseMap);
+  }
+
+  /**
+   * Removes a table context from the workspace state.
+   * Throws an error if the table context does not exist or if there are no databases in the workspace state.
+   * If the table context is the active table context, the active table context is set to undefined.
+   *
+   * @param tableContextId The id of the table context to remove.
+   */
+  async removeTableContext(tableContextId: string) {
+    const databaseMap = this.getDatabases();
+    if (!databaseMap) {
+      throw new Error("No databases found in workspace state.");
+    }
+    const databaseId = this.getDatabaseIdByTableContextId(tableContextId);
+    if (!databaseId) {
+      throw new Error(
+        `No database found in workspace state with a table context with id ${tableContextId}.`
+      );
+    }
+    const database = databaseMap.get(databaseId);
+    if (!database) {
+      throw new Error(
+        `No database found in workspace state with id ${databaseId}.`
+      );
+    }
+
+    const tableContextIndex = database.tableContexts.findIndex(
+      (tableContext) => tableContext.tableContextId === tableContextId
+    );
+    if (tableContextIndex === -1) {
+      throw new Error(
+        `No table context found in database with id ${databaseId} and tableContextId ${tableContextId}.`
+      );
+    }
+
+    database.tableContexts.splice(tableContextIndex, 1);
+
+    database.activeContext = undefined;
     databaseMap.set(databaseId, database);
     await this.setDatabases(databaseMap);
   }
