@@ -1,42 +1,34 @@
 import * as vscode from "vscode";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import {
-  DatabaseExplorerTreeItem,
-  DatabaseInfoTreeItem,
-  TableInfoTreeItem,
-} from "./DatabaseExplorerTreeItem";
-import { convertDatabaseInfoToDatabaseExplorerItem } from "./DatabaseExplorerTreeItem";
+import { DatabaseTreeViewItem } from "./DatabaseTreeViewItem";
+import { convertDatabaseInfoToDatabaseExplorerItem } from "./DatabaseTreeViewItem";
 
 /**
  * Tree view provider for the database explorer.
  * The database explorer is used to view and manage the databases that are available for NLQ-to-SQL queries.
  */
 export class DatabaseExplorerTreeViewProvider
-  implements vscode.TreeDataProvider<DatabaseExplorerTreeItem>
+  implements vscode.TreeDataProvider<DatabaseTreeViewItem>
 {
   private _onDidChangeTreeData: vscode.EventEmitter<
-    DatabaseExplorerTreeItem | undefined
-  > = new vscode.EventEmitter<DatabaseExplorerTreeItem | undefined>();
-  readonly onDidChangeTreeData: vscode.Event<
-    DatabaseExplorerTreeItem | undefined
-  > = this._onDidChangeTreeData.event;
+    DatabaseTreeViewItem | undefined
+  > = new vscode.EventEmitter<DatabaseTreeViewItem | undefined>();
+  readonly onDidChangeTreeData: vscode.Event<DatabaseTreeViewItem | undefined> =
+    this._onDidChangeTreeData.event;
 
-  constructor(
-    private readonly context: vscode.ExtensionContext,
-    private readonly databaseInfoManager: DatabaseInfoManager
-  ) {}
+  constructor(private readonly databaseInfoManager: DatabaseInfoManager) {}
 
   refresh(): void {
     this._onDidChangeTreeData.fire(undefined);
   }
 
-  getTreeItem(element: DatabaseExplorerTreeItem): vscode.TreeItem {
+  getTreeItem(element: DatabaseTreeViewItem): vscode.TreeItem {
     return element;
   }
 
   getChildren(
-    element?: DatabaseExplorerTreeItem | undefined
-  ): vscode.ProviderResult<DatabaseExplorerTreeItem[]> {
+    element?: DatabaseTreeViewItem | undefined
+  ): vscode.ProviderResult<DatabaseTreeViewItem[]> {
     if (element === undefined) {
       let databaseMap = this.databaseInfoManager.databases;
       if (!databaseMap) {
@@ -48,7 +40,7 @@ export class DatabaseExplorerTreeViewProvider
       );
       return databaseInfoTreeItems;
     }
-    if (element instanceof DatabaseExplorerTreeItem) {
+    if (element instanceof DatabaseTreeViewItem) {
       return element.children;
     }
     return []; // Should never reach

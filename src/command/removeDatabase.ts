@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { DatabaseInfoTreeItem } from "../treeView/DatabaseExplorerTreeItem";
+import { DatabaseInfoTreeItem } from "../treeView/DatabaseTreeViewItem";
 
 /**
  * Removes a database from the extension workspace state after user confirmation.
@@ -13,9 +13,9 @@ export async function removeDatabase(
   databaseInfoTreeItem: DatabaseInfoTreeItem,
   databaseInfoManager: DatabaseInfoManager
 ): Promise<void> {
-  const databaseId = databaseInfoTreeItem.id;
+  const databaseId = databaseInfoTreeItem.databaseItemId;
   if (!databaseId) {
-    vscode.window.showErrorMessage("Error: Could not find database to remove.");
+    vscode.window.showErrorMessage("Could not find database to remove");
     return;
   }
 
@@ -41,4 +41,5 @@ export async function removeDatabase(
     });
 
   vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
+  vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableGroup");
 }

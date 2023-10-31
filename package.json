@@ -33,6 +33,16 @@
         "command": "nlq-to-sql.refreshDatabaseExplorer",
         "title": "NLQ-to-SQL: Refresh Database Explorer",
         "icon": "$(extensions-refresh)"
+      },
+      {
+        "command": "nlq-to-sql.refreshActiveTableGroup",
+        "title": "NLQ-to-SQL: Refresh Active Table Group",
+        "icon": "$(extensions-refresh)"
+      },
+      {
+        "command": "nlq-to-sql.selectTableGroup",
+        "title": "NLQ-to-SQL: Select Table Group",
+        "icon": "$(star)"
       }
     ],
     "configuration": [
@@ -76,11 +86,24 @@
         }
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "nlq-to-sql",
+          "title": "NLQ-to-SQL",
+          "icon": "$(database)"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "nlq-to-sql": [
+        {
+          "id": "nlq-to-sql.activeTableGroup",
+          "name": "Active Table Group"
+        },
         {
           "id": "nlq-to-sql.databaseExplorer",
-          "name": "NLQ-to-SQL: Database Explorer"
+          "name": "Database Explorer"
         }
       ]
     },
@@ -93,20 +116,30 @@
       ],
       "view/title": [
         {
+          "command": "nlq-to-sql.addDatabase",
+          "when": "view == nlq-to-sql.databaseExplorer",
+          "group": "navigation@0"
+        },
+        {
           "command": "nlq-to-sql.refreshDatabaseExplorer",
           "when": "view == nlq-to-sql.databaseExplorer",
           "group": "navigation@1"
         },
         {
-          "command": "nlq-to-sql.addDatabase",
-          "when": "view == nlq-to-sql.databaseExplorer",
-          "group": "navigation@0"
+          "command": "nlq-to-sql.refreshActiveTableGroup",
+          "when": "view == nlq-to-sql.activeTableGroup",
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [
         {
           "command": "nlq-to-sql.removeDatabase",
           "when": "view == nlq-to-sql.databaseExplorer && viewItem == databaseInfo",
+          "group": "inline"
+        },
+        {
+          "command": "nlq-to-sql.selectTableGroup",
+          "when": "view == nlq-to-sql.databaseExplorer && viewItem == tableGroup",
           "group": "inline"
         }
       ]

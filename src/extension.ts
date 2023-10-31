@@ -3,13 +3,20 @@ import { generateSql } from "./command/generateSql";
 import { DatabaseInfoManager } from "./database/DatabaseInfoManager";
 import { addDatabase } from "./command/addDatabase";
 import { DatabaseExplorerTreeViewProvider } from "./treeView/DatabaseExplorerTreeViewProvider";
-import { DatabaseInfoTreeItem } from "./treeView/DatabaseExplorerTreeItem";
+import {
+  DatabaseInfoTreeItem,
+  TableGroupTreeItem,
+} from "./treeView/DatabaseTreeViewItem";
 import { removeDatabase } from "./command/removeDatabase";
+import { selectTableGroup } from "./command/selectTableGroup";
+import { ActiveTableGroupTreeViewProvider } from "./treeView/ActiveTableGroupTreeViewProvider";
 
 export function activate(context: vscode.ExtensionContext) {
   const databaseInfoManager = new DatabaseInfoManager(context.workspaceState);
   const databaseExplorerTreeViewProvider = new DatabaseExplorerTreeViewProvider(
-    context,
+    databaseInfoManager
+  );
+  const activeTableGroupTreeViewProvider = new ActiveTableGroupTreeViewProvider(
     databaseInfoManager
   );
 
@@ -17,6 +24,12 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerTreeDataProvider(
       "nlq-to-sql.databaseExplorer",
       databaseExplorerTreeViewProvider
+    );
+
+  const registerActiveTableGroupTreeViewProvider =
+    vscode.window.registerTreeDataProvider(
+      "nlq-to-sql.activeTableGroup",
+      activeTableGroupTreeViewProvider
     );
 
   const addDatabaseCommand = vscode.commands.registerCommand(
@@ -40,6 +53,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const refreshActiveTableGroupCommand = vscode.commands.registerCommand(
+    "nlq-to-sql.refreshActiveTableGroup",
+    () => {
+      activeTableGroupTreeViewProvider.refresh();
+    }
+  );
+
   const removeDatabaseCommand = vscode.commands.registerCommand(
     "nlq-to-sql.removeDatabase",
     async (databaseInfoTreeItem: DatabaseInfoTreeItem) => {
@@ -47,12 +67,22 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const selectTableGroupCommand = vscode.commands.registerCommand(
+    "nlq-to-sql.selectTableGroup",
+    async (tableGroupTreeItem: TableGroupTreeItem) => {
+      await selectTableGroup(tableGroupTreeItem, databaseInfoManager);
+    }
+  );
+
   context.subscriptions.push(
     registerDatabaseExplorerTreeViewProvider,
+    registerActiveTableGroupTreeViewProvider,
     addDatabaseCommand,
     generateSqlCommand,
     refreshDatabaseExplorerCommand,
-    removeDatabaseCommand
+    refreshActiveTableGroupCommand,
+    removeDatabaseCommand,
+    selectTableGroupCommand
   );
 }
 

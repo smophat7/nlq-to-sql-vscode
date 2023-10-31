@@ -160,6 +160,116 @@ export class DatabaseInfoManager {
   }
 
   /**
+   * Sets the active database and the active table group of that database.
+   * Throws an error if the database or table group does not exist.
+   *
+   * @param tableGroupId The id of the table group to set as active.
+   * @param databaseId The id of the database to set as active.
+   */
+  async setActiveTableGroupAndDatabase(
+    tableGroupId: string,
+    databaseId: string
+  ): Promise<void> {
+    const databaseMap = this.databases;
+    if (!databaseMap) {
+      throw new Error("No databases found in workspace state.");
+    }
+    const database = databaseMap.get(databaseId);
+    if (!database) {
+      throw new Error(
+        `No database found in workspace state with id ${databaseId}.`
+      );
+    }
+    const tableGroup = database.tableGroups.find(
+      (group) => group.tableGroupId === tableGroupId
+    );
+    if (!tableGroup) {
+      throw new Error(
+        `No table group found in database with id ${databaseId} and tableGroupId ${tableGroupId}.`
+      );
+    }
+
+    database.activeGroupId = tableGroup.tableGroupId;
+    databaseMap.set(databaseId, database);
+    this.databases = databaseMap;
+    this.activeDatabaseId = databaseId;
+  }
+
+  /**
+   * Returns the id of the database that contains the table group with the given id.
+   *
+   * @param tableGroupId The id of the table group.
+   * @returns The id of the database that contains the table group with the given id or undefined if no database contains the table group or no databases exist.
+   */
+  getDatabaseIdByTableGroupId(tableGroupId: string): string | undefined {
+    const databaseMap = this.databases;
+    if (!databaseMap) {
+      return;
+    }
+    for (const database of databaseMap.values()) {
+      for (const tableGroup of database.tableGroups) {
+        if (tableGroup.tableGroupId === tableGroupId) {
+          return database.databaseId;
+        }
+      }
+    }
+    return;
+  }
+
+  /**
+   * Gets the table information for the table with the given id in the database with the given id.
+   *
+   * @param tableId The id of the table.
+   * @param activeDatabaseId The id of the database.
+   */
+  getTableInfo(tableId: any, activeDatabaseId: string): TableInfo {
+    const databaseMap = this.databases;
+    if (!databaseMap) {
+      throw new Error("No databases found in workspace state.");
+    }
+    const database = databaseMap.get(activeDatabaseId);
+    if (!database) {
+      throw new Error(
+        `No database found in workspace state with id ${activeDatabaseId}.`
+      );
+    }
+    const table = database.tables.find((table) => table.tableId === tableId);
+    if (!table) {
+      throw new Error(
+        `No table found in database with id ${activeDatabaseId} and tableId ${tableId}.`
+      );
+    }
+    return table;
+  }
+
+  /**
+   * Gets the table group information for the active table group of the database with the given id.
+   *
+   * @param databaseId The id of the database.
+   */
+  getActiveTableGroupInfo(databaseId: string): TableGroupInfo {
+    const databaseMap = this.databases;
+    if (!databaseMap) {
+      throw new Error("No databases found in workspace state.");
+    }
+    const database = databaseMap.get(databaseId);
+    if (!database) {
+      throw new Error(
+        `No database found in workspace state with id ${databaseId}.`
+      );
+    }
+    const tableGroup = database.tableGroups.find(
+      (tableGroup) => tableGroup.tableGroupId === database.activeGroupId
+    );
+    if (!tableGroup) {
+      throw new Error(
+        `No active table group found in database with id ${databaseId}.`
+      );
+    }
+    return tableGroup;
+  }
+
+  /**
    * Returns one string of all the active database's active table group's CREATE statements.
    * Throws an error if there is no active database, active group, or tables in the active group.
    * TODO: Make more fault tolerant.

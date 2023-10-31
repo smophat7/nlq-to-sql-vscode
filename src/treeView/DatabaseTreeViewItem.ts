@@ -9,15 +9,14 @@ import {
 import * as constants from "../constants";
 
 // TODO: Clean up and don't duplicate things like id and label
-export class DatabaseExplorerTreeItem extends vscode.TreeItem {
+export class DatabaseTreeViewItem extends vscode.TreeItem {
   public databaseItemId?: string;
-  public label: string;
-  public children?: DatabaseExplorerTreeItem[] = [];
+  public children?: DatabaseTreeViewItem[] = [];
 
   constructor(
     label: string,
     collapsibleState: vscode.TreeItemCollapsibleState,
-    children?: DatabaseExplorerTreeItem[],
+    children?: DatabaseTreeViewItem[],
     databaseItemId?: string,
     themeIcon?: vscode.ThemeIcon | undefined,
     tooltip?: string
@@ -31,7 +30,7 @@ export class DatabaseExplorerTreeItem extends vscode.TreeItem {
   }
 }
 
-export class FolderTreeItem extends DatabaseExplorerTreeItem {
+export class FolderTreeItem extends DatabaseTreeViewItem {
   constructor(
     label: string,
     children: TableInfoTreeItem[] | TableGroupTreeItem[]
@@ -46,7 +45,7 @@ export class FolderTreeItem extends DatabaseExplorerTreeItem {
   }
 }
 
-export class DatabaseInfoTreeItem extends DatabaseExplorerTreeItem {
+export class DatabaseInfoTreeItem extends DatabaseTreeViewItem {
   contextValue = "databaseInfo";
   constructor(
     label: string,
@@ -65,7 +64,8 @@ export class DatabaseInfoTreeItem extends DatabaseExplorerTreeItem {
   }
 }
 
-export class TableGroupTreeItem extends DatabaseExplorerTreeItem {
+export class TableGroupTreeItem extends DatabaseTreeViewItem {
+  contextValue = "tableGroup";
   constructor(
     label: string,
     children: TableInfoTreeItem[],
@@ -81,7 +81,7 @@ export class TableGroupTreeItem extends DatabaseExplorerTreeItem {
   }
 }
 
-export class TableInfoTreeItem extends DatabaseExplorerTreeItem {
+export class TableInfoTreeItem extends DatabaseTreeViewItem {
   constructor(
     label: string,
     children: AttributeInfoTreeItem[],
@@ -97,7 +97,7 @@ export class TableInfoTreeItem extends DatabaseExplorerTreeItem {
   }
 }
 
-export class AttributeInfoTreeItem extends DatabaseExplorerTreeItem {
+export class AttributeInfoTreeItem extends DatabaseTreeViewItem {
   constructor(label: string) {
     super(label, vscode.TreeItemCollapsibleState.None);
   }
@@ -126,7 +126,7 @@ export function convertDatabaseInfoToDatabaseExplorerItem(
   );
 }
 
-function convertTableGroupToTableGroupTreeItem(
+export function convertTableGroupToTableGroupTreeItem(
   tableGroup: TableGroupInfo,
   tableInfoTreeItems: TableInfoTreeItem[]
 ): TableGroupTreeItem {
@@ -146,7 +146,7 @@ function convertTableGroupToTableGroupTreeItem(
   );
 }
 
-function convertTableInfoToTableInfoTreeItem(tableInfo: TableInfo): any {
+export function convertTableInfoToTableInfoTreeItem(tableInfo: TableInfo): any {
   const attributeInfos = tableInfo.attributes;
   const attributeInfoTreeItems = attributeInfos.map((attributeInfo) =>
     convertAttributeInfoToAttributeInfoTreeItem(attributeInfo)

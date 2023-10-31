@@ -39,7 +39,8 @@ export async function addDatabase(databaseInfoManager: DatabaseInfoManager) {
 
   databaseInfoManager.addDatabase(selectedDatabasePath, tableInfos);
 
-  await vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
+  vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
+  vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableGroup");
 }
 
 async function getDatabaseUserSelection(
