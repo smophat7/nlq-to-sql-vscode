@@ -2,10 +2,8 @@ import * as vscode from "vscode";
 import { generateSql } from "./command/generateSql";
 import { DatabaseInfoManager } from "./database/DatabaseInfoManager";
 import { addDatabase } from "./command/addDatabase";
-import {
-  DatabaseExplorerTreeViewProvider,
-  DatabaseInfoTreeItem,
-} from "./treeView/DatabaseExplorerTreeViewProvider";
+import { DatabaseExplorerTreeViewProvider } from "./treeView/DatabaseExplorerTreeViewProvider";
+import { DatabaseInfoTreeItem } from "./treeView/DatabaseExplorerTreeItem";
 import { removeDatabase } from "./command/removeDatabase";
 
 export function activate(context: vscode.ExtensionContext) {

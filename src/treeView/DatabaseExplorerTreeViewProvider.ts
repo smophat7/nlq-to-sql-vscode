@@ -1,11 +1,16 @@
 import * as vscode from "vscode";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 import {
-  DatabaseInfo,
-  TableInfo,
-  AttributeInfo,
-} from "../database/DatabaseInfo";
+  DatabaseExplorerTreeItem,
+  DatabaseInfoTreeItem,
+  TableInfoTreeItem,
+} from "./DatabaseExplorerTreeItem";
+import { convertDatabaseInfoToDatabaseExplorerItem } from "./DatabaseExplorerTreeItem";
 
+/**
+ * Tree view provider for the database explorer.
+ * The database explorer is used to view and manage the databases that are available for NLQ-to-SQL queries.
+ */
 export class DatabaseExplorerTreeViewProvider
   implements vscode.TreeDataProvider<DatabaseExplorerTreeItem>
 {
@@ -50,88 +55,4 @@ export class DatabaseExplorerTreeViewProvider
       return element.children;
     }
   }
-}
-
-// TODO: Clean up and don't duplicate things like id and label
-class DatabaseExplorerTreeItem extends vscode.TreeItem {
-  public id?: string;
-  public label: string;
-  public children?: DatabaseExplorerTreeItem[] = [];
-
-  constructor(
-    label: string,
-    collapsibleState: vscode.TreeItemCollapsibleState,
-    children?: DatabaseExplorerTreeItem[],
-    id?: string,
-    tooltip?: string
-  ) {
-    super(label, collapsibleState);
-    this.label = label;
-    this.children = children;
-    this.id = id;
-    this.tooltip = tooltip;
-  }
-}
-
-export class DatabaseInfoTreeItem extends DatabaseExplorerTreeItem {
-  contextValue = "databaseInfo";
-  constructor(
-    label: string,
-    children: TableInfoTreeItem[],
-    id: string,
-    filePath: string
-  ) {
-    super(
-      label,
-      vscode.TreeItemCollapsibleState.Collapsed,
-      children,
-      id,
-      filePath
-    );
-  }
-}
-
-class TableInfoTreeItem extends DatabaseExplorerTreeItem {
-  constructor(label: string, children: AttributeInfoTreeItem[], id: string) {
-    super(label, vscode.TreeItemCollapsibleState.Collapsed, children, id);
-  }
-}
-
-class AttributeInfoTreeItem extends DatabaseExplorerTreeItem {
-  constructor(label: string) {
-    super(label, vscode.TreeItemCollapsibleState.None);
-  }
-}
-
-function convertDatabaseInfoToDatabaseExplorerItem(
-  databaseInfo: DatabaseInfo
-): DatabaseInfoTreeItem {
-  const tableInfos = databaseInfo.tables;
-  const tableInfoTreeItems = tableInfos.map((tableInfo) =>
-    convertTableInfoToTableInfoTreeItem(tableInfo)
-  );
-  return new DatabaseInfoTreeItem(
-    databaseInfo.name,
-    tableInfoTreeItems,
-    databaseInfo.databaseId,
-    databaseInfo.path
-  );
-}
-function convertTableInfoToTableInfoTreeItem(tableInfo: TableInfo): any {
-  const attributeInfos = tableInfo.attributes;
-  const attributeInfoTreeItems = attributeInfos.map((attributeInfo) =>
-    convertAttributeInfoToAttributeInfoTreeItem(attributeInfo)
-  );
-  return new TableInfoTreeItem(
-    tableInfo.tableName,
-    attributeInfoTreeItems,
-    tableInfo.tableId
-  );
-}
-function convertAttributeInfoToAttributeInfoTreeItem(
-  attributeInfo: AttributeInfo
-): any {
-  return new AttributeInfoTreeItem(
-    `${attributeInfo.attributeName}: ${attributeInfo.attributeType}`
-  );
 }

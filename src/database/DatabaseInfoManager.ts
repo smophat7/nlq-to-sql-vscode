@@ -8,17 +8,24 @@ import {
 } from "./DatabaseInfo";
 import path = require("path");
 
+/**
+ * Manages stored database information for the extension workspace state.
+ */
 export class DatabaseInfoManager {
   private static readonly activeDatabaseIdKey = "activeDatabaseId";
   private static readonly databasesKey = "databases";
   private static readonly queryHistoryKey = "queryHistory";
-
   private readonly workspaceState: vscode.Memento;
 
   constructor(workspaceState: vscode.Memento) {
     this.workspaceState = workspaceState;
   }
 
+  /**
+   * The id of the active database.
+   * The active database is the database that is currently selected in the database explorer tree view.
+   * The active database is used as the basis for NLQ-to-SQL queries.
+   */
   public get activeDatabaseId(): string | undefined {
     return this.workspaceState.get(DatabaseInfoManager.activeDatabaseIdKey);
   }
@@ -30,6 +37,9 @@ export class DatabaseInfoManager {
     );
   }
 
+  /**
+   * The map of database ids to database information.
+   */
   public get databases(): Map<string, DatabaseInfo> | undefined {
     const databasesArray: [string, DatabaseInfo][] | undefined =
       this.workspaceState.get(DatabaseInfoManager.databasesKey);
@@ -50,6 +60,9 @@ export class DatabaseInfoManager {
       });
   }
 
+  /**
+   * The map of query ids to query information. Used for storing generated query history.
+   */
   public get queryHistory(): Map<string, QueryInfo> | undefined {
     return (
       (this.workspaceState.get(DatabaseInfoManager.queryHistoryKey) as Map<
@@ -135,7 +148,7 @@ export class DatabaseInfoManager {
    * @param selectedDatabasePath
    * @returns
    */
-  getIfDatabaseExists(selectedDatabasePath: string): boolean {
+  public getIfDatabaseExists(selectedDatabasePath: string): boolean {
     if (!this.databases) {
       return false;
     }
@@ -151,7 +164,7 @@ export class DatabaseInfoManager {
    * Throws an error if there is no active database, active group, or tables in the active group.
    * TODO: Make more fault tolerant.
    */
-  getActiveGroupSchema(): string {
+  public getActiveGroupSchema(): string {
     if (!this.activeDatabaseId) {
       throw new Error("No active database.");
     }
