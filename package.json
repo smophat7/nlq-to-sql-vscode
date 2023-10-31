@@ -11,17 +11,28 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./dist/extension.js",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "nlq-to-sql.generateSql",
-        "title": "Generate SQL w/ AI",
+        "title": "NLQ-to-SQL: Generate SQL w/ AI",
         "when": "editorHasSelection"
       },
       {
-        "command": "nlq-to-sql.modifySql",
-        "title": "Modify SQL w/ AI"
+        "command": "nlq-to-sql.addDatabase",
+        "title": "NLQ-to-SQL: Add Database",
+        "icon": "$(add)"
+      },
+      {
+        "command": "nlq-to-sql.removeDatabase",
+        "title": "NLQ-to-SQL: Remove Database",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "nlq-to-sql.refreshDatabaseExplorer",
+        "title": "NLQ-to-SQL: Refresh Database Explorer",
+        "icon": "$(extensions-refresh)"
       }
     ],
     "configuration": [
@@ -29,13 +40,77 @@
         "title": "NLQ-to-SQL",
         "properties": {
           "nlq-to-sql.apiKey": {
+            "description": "OpenAI API Key",
             "type": "string",
             "default": "",
-            "description": "OpenAI API Key"
+            "order": 1
+          },
+          "nlq-to-sql.modelId": {
+            "description": "OpenAI Model ID",
+            "type": "string",
+            "default": "gpt-3.5-turbo",
+            "order": 2
+          },
+          "nlq-to-sql.excludedDirectories": {
+            "description": "Directories to skip when searching for database files",
+            "type": "array",
+            "default": [
+              ".git",
+              ".vscode",
+              ".idea",
+              "bower_components",
+              "node_modules",
+              "build",
+              "out",
+              "dist",
+              "bin",
+              "tmp",
+              ".DS_Store",
+              "coverage",
+              "results",
+              "logs",
+              "test"
+            ],
+            "order": 3
           }
         }
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "nlq-to-sql.databaseExplorer",
+          "name": "NLQ-to-SQL: Database Explorer"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "nlq-to-sql.removeDatabase",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "nlq-to-sql.refreshDatabaseExplorer",
+          "when": "view == nlq-to-sql.databaseExplorer",
+          "group": "navigation@1"
+        },
+        {
+          "command": "nlq-to-sql.addDatabase",
+          "when": "view == nlq-to-sql.databaseExplorer",
+          "group": "navigation@0"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "nlq-to-sql.removeDatabase",
+          "when": "view == nlq-to-sql.databaseExplorer && viewItem == databaseInfo",
+          "group": "inline"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -49,9 +124,9 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.5",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
+    "@types/uuid": "^9.0.6",
     "@types/vscode": "^1.83.0",
     "@typescript-eslint/eslint-plugin": "^6.4.1",
     "@typescript-eslint/parser": "^6.4.1",
@@ -66,6 +141,10 @@
   },
   "dependencies": {
     "better-sqlite3": "^9.0.0",
-    "openai": "^4.12.3"
+    "node-sql-parser": "^4.11.0",
+    "openai": "^4.12.3",
+    "sqlite": "^5.0.1",
+    "sqlite-parser": "^1.0.1",
+    "uuid": "^9.0.1"
   }
 }

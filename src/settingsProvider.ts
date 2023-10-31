@@ -9,7 +9,7 @@ export class SettingsProvider {
   public static getApiKey(): string {
     const apiKey = this.config.get("apiKey");
     if (!apiKey) {
-      vscode.window.showErrorMessage("TODO: Error message - API key not set.");
+      vscode.window.showErrorMessage("NLQ-to-SQL: API key not set."); // TODO: use constants
     }
     return apiKey as string;
   }
@@ -17,8 +17,18 @@ export class SettingsProvider {
   public static getModelId(): string {
     const modelId = this.config.get("modelId");
     if (!modelId) {
-      vscode.window.showErrorMessage("TODO: Error message - model ID not set.");
+      vscode.window.showErrorMessage("NLQ-to-SQL: API Model ID not set."); // TODO: use constants
     }
     return modelId as string;
+  }
+
+  public static getExcludedDirectories(): string[] {
+    const excludedDirectories = this.config.get("excludedDirectories");
+    if (!excludedDirectories) {
+      vscode.window.showErrorMessage(
+        "NLQ-to-SQL: No excluded directories set."
+      );
+    }
+    return excludedDirectories as string[];
   }
 }
