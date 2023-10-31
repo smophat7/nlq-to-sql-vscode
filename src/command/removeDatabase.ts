@@ -41,5 +41,5 @@ export async function removeDatabase(
     });
 
   vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
-  vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableGroup");
+  vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableContext");
 }

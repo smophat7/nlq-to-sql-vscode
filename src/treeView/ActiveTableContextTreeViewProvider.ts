@@ -3,14 +3,14 @@ import * as vscode from "vscode";
 import {
   DatabaseTreeViewItem,
   TableInfoTreeItem,
-  convertTableGroupToTableGroupTreeItem,
+  convertTableContextToTableContextTreeItem,
   convertTableInfoToTableInfoTreeItem,
 } from "./DatabaseTreeViewItem";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 import { TableInfo } from "../database/DatabaseInfo";
 import * as constants from "../constants";
 
-export class ActiveTableGroupTreeViewProvider
+export class ActiveTableContextTreeViewProvider
   implements vscode.TreeDataProvider<DatabaseTreeViewItem>
 {
   private _onDidChangeTreeData: vscode.EventEmitter<
@@ -48,10 +48,10 @@ export class ActiveTableGroupTreeViewProvider
         return []; // TODO: How to handle if no valid database?
       }
 
-      const activeTableGroupInfo =
-        this.databaseInfoManager.getActiveTableGroupInfo(activeDatabaseId);
+      const activeTableContextInfo =
+        this.databaseInfoManager.getActiveTableContextInfo(activeDatabaseId);
 
-      const tableIds = activeTableGroupInfo.tableIds;
+      const tableIds = activeTableContextInfo.tableIds;
       if (!tableIds) {
         return []; // TODO: How to handle if no tables?
       }
@@ -69,17 +69,18 @@ export class ActiveTableGroupTreeViewProvider
         }
       );
 
-      let activeTableGroupTreeItem = convertTableGroupToTableGroupTreeItem(
-        activeTableGroupInfo,
-        tableInfoTreeItems
-      );
-      activeTableGroupTreeItem.iconPath = new vscode.ThemeIcon(
+      let activeTableContextTreeItem =
+        convertTableContextToTableContextTreeItem(
+          activeTableContextInfo,
+          tableInfoTreeItems
+        );
+      activeTableContextTreeItem.iconPath = new vscode.ThemeIcon(
         constants.ACTIVE_TABLE_GROUP_ICON_CODE
       );
-      activeTableGroupTreeItem.label = `${database.name} > ${activeTableGroupTreeItem.label}`;
-      activeTableGroupTreeItem.collapsibleState =
+      activeTableContextTreeItem.label = `${database.name} > ${activeTableContextTreeItem.label}`;
+      activeTableContextTreeItem.collapsibleState =
         vscode.TreeItemCollapsibleState.Expanded;
-      return [activeTableGroupTreeItem];
+      return [activeTableContextTreeItem];
     }
     if (element instanceof DatabaseTreeViewItem) {
       return element.children;

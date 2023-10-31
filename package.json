@@ -35,13 +35,13 @@
         "icon": "$(extensions-refresh)"
       },
       {
-        "command": "nlq-to-sql.refreshActiveTableGroup",
-        "title": "NLQ-to-SQL: Refresh Active Table Group",
+        "command": "nlq-to-sql.refreshActiveTableContext",
+        "title": "NLQ-to-SQL: Refresh Active Table Context",
         "icon": "$(extensions-refresh)"
       },
       {
-        "command": "nlq-to-sql.selectTableGroup",
-        "title": "NLQ-to-SQL: Select Table Group",
+        "command": "nlq-to-sql.selectTableContext",
+        "title": "NLQ-to-SQL: Select Table Context",
         "icon": "$(star)"
       }
     ],
@@ -98,8 +98,8 @@
     "views": {
       "nlq-to-sql": [
         {
-          "id": "nlq-to-sql.activeTableGroup",
-          "name": "Active Table Group"
+          "id": "nlq-to-sql.activeTableContext",
+          "name": "Active Table Context"
         },
         {
           "id": "nlq-to-sql.databaseExplorer",
@@ -126,8 +126,8 @@
           "group": "navigation@1"
         },
         {
-          "command": "nlq-to-sql.refreshActiveTableGroup",
-          "when": "view == nlq-to-sql.activeTableGroup",
+          "command": "nlq-to-sql.refreshActiveTableContext",
+          "when": "view == nlq-to-sql.activeTableContext",
           "group": "navigation@1"
         }
       ],
@@ -138,8 +138,8 @@
           "group": "inline"
         },
         {
-          "command": "nlq-to-sql.selectTableGroup",
-          "when": "view == nlq-to-sql.databaseExplorer && viewItem == tableGroup",
+          "command": "nlq-to-sql.selectTableContext",
+          "when": "view == nlq-to-sql.databaseExplorer && viewItem == tableContext",
           "group": "inline"
         }
       ]

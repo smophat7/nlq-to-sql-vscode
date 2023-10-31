@@ -4,7 +4,7 @@ import {
   DatabaseInfo,
   TableInfo,
   AttributeInfo,
-  TableGroupInfo,
+  TableContextInfo,
 } from "../database/DatabaseInfo";
 import * as constants from "../constants";
 
@@ -33,7 +33,7 @@ export class DatabaseTreeViewItem extends vscode.TreeItem {
 export class FolderTreeItem extends DatabaseTreeViewItem {
   constructor(
     label: string,
-    children: TableInfoTreeItem[] | TableGroupTreeItem[]
+    children: TableInfoTreeItem[] | TableContextTreeItem[]
   ) {
     super(
       label,
@@ -64,8 +64,8 @@ export class DatabaseInfoTreeItem extends DatabaseTreeViewItem {
   }
 }
 
-export class TableGroupTreeItem extends DatabaseTreeViewItem {
-  contextValue = "tableGroup";
+export class TableContextTreeItem extends DatabaseTreeViewItem {
+  contextValue = "tableContext";
   constructor(
     label: string,
     children: TableInfoTreeItem[],
@@ -107,16 +107,16 @@ export function convertDatabaseInfoToDatabaseExplorerItem(
   databaseInfo: DatabaseInfo
 ): DatabaseInfoTreeItem {
   const tableInfos = databaseInfo.tables;
-  const tableGroups = databaseInfo.tableGroups;
+  const tableContexts = databaseInfo.tableContexts;
   const tableInfoTreeItems = tableInfos.map((tableInfo) =>
     convertTableInfoToTableInfoTreeItem(tableInfo)
   );
-  const tableGroupTreeItems = tableGroups.map((tableGroup) =>
-    convertTableGroupToTableGroupTreeItem(tableGroup, tableInfoTreeItems)
+  const tableContextTreeItems = tableContexts.map((tableContext) =>
+    convertTableContextToTableContextTreeItem(tableContext, tableInfoTreeItems)
   );
   let folderTreeItems: FolderTreeItem[] = [
     new FolderTreeItem("Tables", tableInfoTreeItems),
-    new FolderTreeItem("Environment Groups", tableGroupTreeItems),
+    new FolderTreeItem("Contexts", tableContextTreeItems),
   ];
   return new DatabaseInfoTreeItem(
     databaseInfo.name,
@@ -126,23 +126,23 @@ export function convertDatabaseInfoToDatabaseExplorerItem(
   );
 }
 
-export function convertTableGroupToTableGroupTreeItem(
-  tableGroup: TableGroupInfo,
+export function convertTableContextToTableContextTreeItem(
+  tableContext: TableContextInfo,
   tableInfoTreeItems: TableInfoTreeItem[]
-): TableGroupTreeItem {
-  let tableInfoTreeItemsInTableGroup: TableInfoTreeItem[] = [];
-  tableGroup.tableIds.forEach((tableId) => {
+): TableContextTreeItem {
+  let tableInfoTreeItemsInTableContext: TableInfoTreeItem[] = [];
+  tableContext.tableIds.forEach((tableId) => {
     let tableInfoTreeItem = tableInfoTreeItems.find(
       (tableInfoTreeItem) => tableInfoTreeItem.databaseItemId === tableId
     );
     if (tableInfoTreeItem) {
-      tableInfoTreeItemsInTableGroup.push(tableInfoTreeItem);
+      tableInfoTreeItemsInTableContext.push(tableInfoTreeItem);
     }
   });
-  return new TableGroupTreeItem(
-    tableGroup.tableGroupName,
-    tableInfoTreeItemsInTableGroup,
-    tableGroup.tableGroupId
+  return new TableContextTreeItem(
+    tableContext.tableContextName,
+    tableInfoTreeItemsInTableContext,
+    tableContext.tableContextId
   );
 }
 

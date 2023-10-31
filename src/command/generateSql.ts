@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import OpenAI from "openai";
-import { SettingsProvider } from "../settingsProvider";
+import { SettingsManager } from "../SettingsManager";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 
 /**
@@ -26,7 +26,7 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
     schema = databaseInfoManager.getActiveGroupSchema();
   } catch (error) {
     vscode.window.showErrorMessage(
-      `Failed to retrieve the schema of the active table group: ${error}`
+      `Failed to retrieve the schema of the active table context: ${error}`
     );
     return;
   }
@@ -58,7 +58,7 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
  * Requests an SQL query from the OpenAI API using the given natural language.
  * TODO: Refactor to use a separate class for LLM API requests.
  *
- * @param schema The schema of the active table group.
+ * @param schema The schema of the active table context.
  * @param query The natural language query to convert to SQL.
  * @returns The generated SQL query or undefined if the request failed or the response was undefined.
  */
@@ -67,7 +67,7 @@ async function requestLlmConversion(
   query: string
 ): Promise<string | undefined> {
   const openai = new OpenAI({
-    apiKey: SettingsProvider.getApiKey(),
+    apiKey: SettingsManager.getApiKey(),
   });
   const chatCompletion = await openai.chat.completions.create({
     messages: [
@@ -90,7 +90,7 @@ async function requestLlmConversion(
         content: `Natural language question to convert to SQL: ${query}`,
       },
     ],
-    model: SettingsProvider.getModelId(),
+    model: SettingsManager.getModelId(),
   });
   return chatCompletion.choices[0].message.content?.trim(); // TODO: Error handling
 }

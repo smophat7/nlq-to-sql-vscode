@@ -4,7 +4,7 @@ import {
   DatabaseInfo,
   QueryInfo,
   TableInfo,
-  TableGroupInfo,
+  TableContextInfo,
 } from "./DatabaseInfo";
 import path = require("path");
 
@@ -86,9 +86,9 @@ export class DatabaseInfoManager {
    * @param tables Information about the tables in the database. Converted to TableInfo.
    */
   public addDatabase(filePath: string, tables: TableInfo[]): void {
-    const tableGroup: TableGroupInfo = {
-      tableGroupId: uuidv4(),
-      tableGroupName: "All Tables",
+    const tableContext: TableContextInfo = {
+      tableContextId: uuidv4(),
+      tableContextName: "All Tables",
       tableIds: tables.map((table) => table.tableId),
     };
 
@@ -96,9 +96,9 @@ export class DatabaseInfoManager {
       databaseId: uuidv4(),
       path: filePath,
       name: path.basename(filePath),
-      activeGroupId: tableGroup.tableGroupId,
+      activeGroupId: tableContext.tableContextId,
       tables: tables,
-      tableGroups: [tableGroup],
+      tableContexts: [tableContext],
     };
 
     let databaseMap = this.databases;
@@ -160,14 +160,14 @@ export class DatabaseInfoManager {
   }
 
   /**
-   * Sets the active database and the active table group of that database.
-   * Throws an error if the database or table group does not exist.
+   * Sets the active database and the active table context of that database.
+   * Throws an error if the database or table context does not exist.
    *
-   * @param tableGroupId The id of the table group to set as active.
+   * @param tableContextId The id of the table context to set as active.
    * @param databaseId The id of the database to set as active.
    */
-  async setActiveTableGroupAndDatabase(
-    tableGroupId: string,
+  async setActiveTableContextAndDatabase(
+    tableContextId: string,
     databaseId: string
   ): Promise<void> {
     const databaseMap = this.databases;
@@ -180,35 +180,35 @@ export class DatabaseInfoManager {
         `No database found in workspace state with id ${databaseId}.`
       );
     }
-    const tableGroup = database.tableGroups.find(
-      (group) => group.tableGroupId === tableGroupId
+    const tableContext = database.tableContexts.find(
+      (group) => group.tableContextId === tableContextId
     );
-    if (!tableGroup) {
+    if (!tableContext) {
       throw new Error(
-        `No table group found in database with id ${databaseId} and tableGroupId ${tableGroupId}.`
+        `No table context found in database with id ${databaseId} and tableContextId ${tableContextId}.`
       );
     }
 
-    database.activeGroupId = tableGroup.tableGroupId;
+    database.activeGroupId = tableContext.tableContextId;
     databaseMap.set(databaseId, database);
     this.databases = databaseMap;
     this.activeDatabaseId = databaseId;
   }
 
   /**
-   * Returns the id of the database that contains the table group with the given id.
+   * Returns the id of the database that contains the table context with the given id.
    *
-   * @param tableGroupId The id of the table group.
-   * @returns The id of the database that contains the table group with the given id or undefined if no database contains the table group or no databases exist.
+   * @param tableContextId The id of the table context.
+   * @returns The id of the database that contains the table context with the given id or undefined if no database contains the table context or no databases exist.
    */
-  getDatabaseIdByTableGroupId(tableGroupId: string): string | undefined {
+  getDatabaseIdByTableContextId(tableContextId: string): string | undefined {
     const databaseMap = this.databases;
     if (!databaseMap) {
       return;
     }
     for (const database of databaseMap.values()) {
-      for (const tableGroup of database.tableGroups) {
-        if (tableGroup.tableGroupId === tableGroupId) {
+      for (const tableContext of database.tableContexts) {
+        if (tableContext.tableContextId === tableContextId) {
           return database.databaseId;
         }
       }
@@ -243,11 +243,11 @@ export class DatabaseInfoManager {
   }
 
   /**
-   * Gets the table group information for the active table group of the database with the given id.
+   * Gets the table context information for the active table context of the database with the given id.
    *
    * @param databaseId The id of the database.
    */
-  getActiveTableGroupInfo(databaseId: string): TableGroupInfo {
+  getActiveTableContextInfo(databaseId: string): TableContextInfo {
     const databaseMap = this.databases;
     if (!databaseMap) {
       throw new Error("No databases found in workspace state.");
@@ -258,19 +258,19 @@ export class DatabaseInfoManager {
         `No database found in workspace state with id ${databaseId}.`
       );
     }
-    const tableGroup = database.tableGroups.find(
-      (tableGroup) => tableGroup.tableGroupId === database.activeGroupId
+    const tableContext = database.tableContexts.find(
+      (tableContext) => tableContext.tableContextId === database.activeGroupId
     );
-    if (!tableGroup) {
+    if (!tableContext) {
       throw new Error(
-        `No active table group found in database with id ${databaseId}.`
+        `No active table context found in database with id ${databaseId}.`
       );
     }
-    return tableGroup;
+    return tableContext;
   }
 
   /**
-   * Returns one string of all the active database's active table group's CREATE statements.
+   * Returns one string of all the active database's active table context's CREATE statements.
    * Throws an error if there is no active database, active group, or tables in the active group.
    * TODO: Make more fault tolerant.
    */
@@ -293,9 +293,9 @@ export class DatabaseInfoManager {
     if (!activeGroupId) {
       throw new Error("No active group.");
     }
-    const activeGroup: TableGroupInfo | undefined =
-      activeDatabase.tableGroups.find(
-        (group: TableGroupInfo) => group.tableGroupId === activeGroupId
+    const activeGroup: TableContextInfo | undefined =
+      activeDatabase.tableContexts.find(
+        (group: TableContextInfo) => group.tableContextId === activeGroupId
       );
     if (!activeGroup) {
       throw new Error(

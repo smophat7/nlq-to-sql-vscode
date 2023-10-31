@@ -7,7 +7,7 @@ export type DatabaseInfo = {
   path: string;
   activeGroupId?: string;
   tables: TableInfo[];
-  tableGroups: TableGroupInfo[];
+  tableContexts: TableContextInfo[];
 };
 
 /**
@@ -30,12 +30,12 @@ export interface AttributeInfo {
 }
 
 /**
- * Database table group information for the extension context.
+ * Database table context information for the extension context.
  * To be used for creating groups/contexts/environments of tables to use as the basis for NLQ-to-SQL queries.
  */
-export interface TableGroupInfo {
-  tableGroupId: string;
-  tableGroupName: string;
+export interface TableContextInfo {
+  tableContextId: string;
+  tableContextName: string;
   tableIds: string[];
 }
 

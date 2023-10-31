@@ -4,7 +4,7 @@ import * as path from "path";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 import { TableInfo } from "../database/DatabaseInfo";
 import { convertCreateStatementsToTableInfo } from "../database/convertCreateStatementsToTableInfo";
-import { SettingsProvider } from "../settingsProvider";
+import { SettingsManager } from "../SettingsManager";
 
 // TODO: use constants for error messages?
 /**
@@ -40,7 +40,7 @@ export async function addDatabase(databaseInfoManager: DatabaseInfoManager) {
   databaseInfoManager.addDatabase(selectedDatabasePath, tableInfos);
 
   vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
-  vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableGroup");
+  vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableContext");
 }
 
 async function getDatabaseUserSelection(
@@ -125,7 +125,7 @@ async function findFilesInDirectory(
  * @returns True if the directory should be excluded from the search.
  */
 function shouldExcludeDirectory(directoryName: string): boolean {
-  return SettingsProvider.getExcludedDirectories().includes(directoryName);
+  return SettingsManager.getExcludedDirectories().includes(directoryName);
 }
 
 /**

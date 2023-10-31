@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 /**
  * Controls access to the extension settings in VS Code.
  */
-export class SettingsProvider {
+export class SettingsManager {
   private static config = vscode.workspace.getConfiguration(
     constants.EXTENSION_ID
   );
