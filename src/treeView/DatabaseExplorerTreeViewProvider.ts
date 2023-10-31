@@ -48,11 +48,9 @@ export class DatabaseExplorerTreeViewProvider
       );
       return databaseInfoTreeItems;
     }
-    if (element instanceof DatabaseInfoTreeItem) {
+    if (element instanceof DatabaseExplorerTreeItem) {
       return element.children;
     }
-    if (element instanceof TableInfoTreeItem) {
-      return element.children;
-    }
+    return []; // Should never reach
   }
 }
