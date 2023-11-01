@@ -4,17 +4,13 @@ import { SettingsManager } from "../SettingsManager";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 
 /**
- * Generates an SQL query from the user's natural language query, inserting it into the active editor.
+ * Generates an SQL query from the user's natural language query, inserting it into the active editor
+ * (opening a new editor and blank document if there is no active editor).
  *
  * @param databaseInfoManager
  * @returns
  */
 export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
-  const editor = vscode.window.activeTextEditor;
-  if (!editor) {
-    return;
-  }
-
   const naturalLanguageQuery = await getUserQuery();
   if (!naturalLanguageQuery) {
     vscode.window.showErrorMessage("Query cannot be empty.");
@@ -46,6 +42,14 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
           return;
         }
 
+        let editor = vscode.window.activeTextEditor;
+        if (!editor) {
+          const blankUntitledDocument =
+            await vscode.workspace.openTextDocument();
+          editor = await vscode.window.showTextDocument(blankUntitledDocument, {
+            viewColumn: vscode.ViewColumn.Beside,
+          });
+        }
         insertSqlIntoEditor(editor, sql);
       } catch (error) {
         vscode.window.showErrorMessage(`Error generating SQL: ${error}`);
