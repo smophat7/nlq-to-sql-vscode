@@ -5,6 +5,7 @@ import {
   TableInfo,
   AttributeInfo,
   TableContextInfo,
+  QueryInfo,
 } from "../database/DatabaseInfo";
 import * as constants from "../constants";
 
@@ -106,6 +107,13 @@ export class AttributeInfoTreeItem extends DatabaseTreeViewItem {
   }
 }
 
+export class QueryInfoTreeItem extends DatabaseTreeViewItem {
+  contextValue = "queryInfo";
+  constructor(label: string, queryId: string) {
+    super(label, vscode.TreeItemCollapsibleState.None, undefined, queryId);
+  }
+}
+
 export function convertDatabaseInfoToDatabaseExplorerItem(
   databaseInfo: DatabaseInfo
 ): DatabaseInfoTreeItem {
@@ -177,4 +185,8 @@ function convertAttributeInfoToAttributeInfoTreeItem(
   return new AttributeInfoTreeItem(
     `${attributeInfo.attributeName}: ${attributeInfo.attributeType}`
   );
+}
+
+export function convertQueryInfoToQueryInfoTreeItem(queryInfo: QueryInfo) {
+  return new QueryInfoTreeItem(queryInfo.query, queryInfo.queryId);
 }

@@ -10,6 +10,9 @@ import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 import { TableInfo } from "../database/DatabaseInfo";
 import * as constants from "../constants";
 
+/**
+ * Tree view provider for the active table context view.
+ */
 export class ActiveTableContextTreeViewProvider
   implements vscode.TreeDataProvider<DatabaseTreeViewItem>
 {

@@ -63,12 +63,11 @@ export class DatabaseInfoManager {
    * The map of query ids to query information. Used for storing generated query history.
    */
   public getQueryHistory(): Map<string, QueryInfo> | undefined {
-    return (
-      (this.workspaceState.get(DatabaseInfoManager.queryHistoryKey) as Map<
-        string,
-        QueryInfo
-      >) || undefined
-    );
+    const queryHistoryArray: [string, QueryInfo][] | undefined =
+      this.workspaceState.get(DatabaseInfoManager.queryHistoryKey);
+    return queryHistoryArray
+      ? new Map<string, QueryInfo>(queryHistoryArray)
+      : undefined;
   }
 
   public async setQueryHistory(queryHistory: Map<string, QueryInfo> | null) {
@@ -353,6 +352,76 @@ export class DatabaseInfoManager {
     database.activeContext = undefined;
     databaseMap.set(databaseId, database);
     await this.setDatabases(databaseMap);
+  }
+
+  /**
+   * Adds a query to the query history.
+   *
+   * @param query The query to add to the query history.
+   */
+  async addQueryToHistory(query: string) {
+    let queryHistory = this.getQueryHistory();
+    if (!queryHistory) {
+      queryHistory = new Map<string, QueryInfo>();
+    }
+
+    const queryInfo: QueryInfo = {
+      queryId: uuidv4(),
+      query: query,
+      dateUtc: new Date(),
+    };
+
+    queryHistory.set(queryInfo.queryId, queryInfo);
+    await this.setQueryHistory(queryHistory);
+  }
+
+  /**
+   * Gets the query information for the query with the given id.
+   *
+   * @param queryId The id of the query.
+   * @returns The query information for the query with the given id.
+   * @throws An error if the query does not exist in the query history or if there is no query history.
+   */
+  getQueryInfo(queryId: string) {
+    const queryHistory = this.getQueryHistory();
+    if (!queryHistory) {
+      throw new Error("No query history found in workspace state.");
+    }
+    const queryInfo = queryHistory.get(queryId);
+    if (!queryInfo) {
+      throw new Error(
+        `No query found in query history with id ${queryId}. Query history: ${JSON.stringify(
+          queryHistory
+        )}`
+      );
+    }
+    return queryInfo;
+  }
+
+  /**
+   * Removes a query from the query history.
+   *
+   * @param queryId The id of the query to remove from the query history.
+   * @throws An error if the query does not exist in the query history or if there is no query history.
+   */
+  async removeQueryFromHistory(queryId: string) {
+    let queryHistory = this.getQueryHistory();
+    if (!queryHistory) {
+      throw new Error("No query history found in workspace state.");
+    }
+    const ifExisted = queryHistory.delete(queryId);
+    if (!ifExisted) {
+      throw new Error(`No query found in query history with id ${queryId}.`);
+    }
+
+    await this.setQueryHistory(queryHistory);
+  }
+
+  /**
+   * Clears the query history.
+   */
+  async clearQueryHistory() {
+    await this.setQueryHistory(new Map<string, QueryInfo>());
   }
 
   /**

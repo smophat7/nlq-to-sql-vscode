@@ -40,6 +40,11 @@
         "icon": "$(extensions-refresh)"
       },
       {
+        "command": "nlq-to-sql.refreshQueryHistory",
+        "title": "Refresh",
+        "icon": "$(extensions-refresh)"
+      },
+      {
         "command": "nlq-to-sql.selectTableContext",
         "title": "Select Table Context",
         "icon": "$(star)"
@@ -58,6 +63,26 @@
         "command": "nlq-to-sql.removeTableContext",
         "title": "Remove Table Context",
         "icon": "$(trash)"
+      },
+      {
+        "command": "nlq-to-sql.insertQuery",
+        "title": "Insert Query",
+        "icon": "$(insert)"
+      },
+      {
+        "command": "nlq-to-sql.copyQuery",
+        "title": "Copy Query to Clipboard",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "nlq-to-sql.removeQueryFromHistory",
+        "title": "Remove Query",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "nlq-to-sql.clearQueryHistory",
+        "title": "NLQ-to-SQL: Clear Query History",
+        "icon": "$(clear-all)"
       }
     ],
     "configuration": [
@@ -119,6 +144,10 @@
         {
           "id": "nlq-to-sql.databaseExplorer",
           "name": "Database Explorer"
+        },
+        {
+          "id": "nlq-to-sql.queryHistory",
+          "name": "Generated Queries"
         }
       ]
     },
@@ -141,11 +170,27 @@
           "when": "false"
         },
         {
+          "command": "nlq-to-sql.refreshQueryHistory",
+          "when": "false"
+        }
+        {
           "command": "nlq-to-sql.addTablesToContext",
           "when": "false"
         },
         {
           "command": "nlq-to-sql.removeTableContext",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.removeQueryFromHistory",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.insertQuery",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.copyQuery",
           "when": "false"
         }
       ],
@@ -163,6 +208,16 @@
         {
           "command": "nlq-to-sql.refreshActiveTableContext",
           "when": "view == nlq-to-sql.activeTableContext",
+          "group": "navigation@1"
+        },
+        {
+          "command": "nlq-to-sql.clearQueryHistory",
+          "when": "view == nlq-to-sql.queryHistory",
+          "group": "navigation@0"
+        },
+        {
+          "command": "nlq-to-sql.refreshQueryHistory",
+          "when": "view == nlq-to-sql.queryHistory",
           "group": "navigation@1"
         }
       ],
@@ -191,6 +246,21 @@
           "command": "nlq-to-sql.removeTableContext",
           "when": "view == nlq-to-sql.databaseExplorer && viewItem == tableContext",
           "group": "inline"
+        },
+        {
+          "command": "nlq-to-sql.removeQueryFromHistory",
+          "when": "view == nlq-to-sql.queryHistory && viewItem == queryInfo",
+          "group": "inline@0"
+        },
+        {
+          "command": "nlq-to-sql.copyQuery",
+          "when": "view == nlq-to-sql.queryHistory && viewItem == queryInfo",
+          "group": "inline@1"
+        },
+        {
+          "command": "nlq-to-sql.insertQuery",
+          "when": "view == nlq-to-sql.queryHistory && viewItem == queryInfo",
+          "group": "inline@2"
         }
       ]
     },

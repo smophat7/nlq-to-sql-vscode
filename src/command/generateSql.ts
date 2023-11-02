@@ -50,7 +50,10 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
             viewColumn: vscode.ViewColumn.Beside,
           });
         }
+
         insertSqlIntoEditor(editor, sql);
+        await databaseInfoManager.addQueryToHistory(sql);
+        vscode.commands.executeCommand("nlq-to-sql.refreshQueryHistory");
       } catch (error) {
         vscode.window.showErrorMessage(`Error generating SQL: ${error}`);
       }

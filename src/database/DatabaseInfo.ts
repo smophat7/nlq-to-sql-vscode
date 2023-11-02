@@ -46,4 +46,5 @@ export interface TableContextInfo {
 export interface QueryInfo {
   queryId: string;
   query: string;
+  dateUtc: Date;
 }
