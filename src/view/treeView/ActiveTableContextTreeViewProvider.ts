@@ -6,9 +6,9 @@ import {
   convertTableContextToTableContextTreeItem,
   convertTableInfoToTableInfoTreeItem,
 } from "./DatabaseTreeViewItem";
-import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { TableInfo } from "../database/DatabaseInfo";
-import * as constants from "../constants";
+import { DatabaseInfoManager } from "../../database/DatabaseInfoManager";
+import { TableInfo } from "../../database/DatabaseInfo";
+import * as constants from "../../constants";
 
 /**
  * Tree view provider for the active table context view.

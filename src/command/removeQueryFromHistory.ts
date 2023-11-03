@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { QueryInfoTreeItem } from "../treeView/DatabaseTreeViewItem";
+import { QueryInfoTreeItem } from "../view/treeView/DatabaseTreeViewItem";
 
 export async function removeQueryFromHistory(
   queryInfoTreeItem: QueryInfoTreeItem,

@@ -2,15 +2,15 @@ import * as vscode from "vscode";
 import { generateSql } from "./command/generateSql";
 import { DatabaseInfoManager } from "./database/DatabaseInfoManager";
 import { addDatabase } from "./command/addDatabase";
-import { DatabaseExplorerTreeViewProvider } from "./treeView/DatabaseExplorerTreeViewProvider";
-import { ActiveTableContextTreeViewProvider } from "./treeView/ActiveTableContextTreeViewProvider";
-import { QueryHistoryTreeViewProvider } from "./treeView/QueryHistoryTreeViewProvider";
+import { DatabaseExplorerTreeViewProvider } from "./view/treeView/DatabaseExplorerTreeViewProvider";
+import { ActiveTableContextTreeViewProvider } from "./view/treeView/ActiveTableContextTreeViewProvider";
+import { QueryHistoryTreeViewProvider } from "./view/treeView/QueryHistoryTreeViewProvider";
 import {
   DatabaseInfoTreeItem,
   FolderTreeItem,
   QueryInfoTreeItem,
   TableContextTreeItem,
-} from "./treeView/DatabaseTreeViewItem";
+} from "./view/treeView/DatabaseTreeViewItem";
 import { removeDatabase } from "./command/removeDatabase";
 import { selectTableContext } from "./command/selectTableContext";
 import { addTablesToContext } from "./command/addTablesToContext";

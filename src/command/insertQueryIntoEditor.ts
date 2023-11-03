@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { QueryInfoTreeItem } from "../treeView/DatabaseTreeViewItem";
+import { QueryInfoTreeItem } from "../view/treeView/DatabaseTreeViewItem";
 
 /**
  * Inserts the query into the active editor at the current cursor position.

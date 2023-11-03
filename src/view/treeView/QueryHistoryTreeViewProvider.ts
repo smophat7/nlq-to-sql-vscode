@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
+import { DatabaseInfoManager } from "../../database/DatabaseInfoManager";
 import {
   DatabaseTreeViewItem,
   QueryInfoTreeItem,
