@@ -54,10 +54,9 @@ export class DatabaseInfoTreeItem extends DatabaseTreeViewItem {
     label: string,
     children: FolderTreeItem[],
     databaseItemId: string,
-    filePath: string,
     dialect: string
   ) {
-    const tooltip = `Database: ${label}\nFile path: ${filePath}\nDialect: ${dialect}`;
+    const tooltip = `Database: ${label}\nDialect: ${dialect}`;
     super(
       label,
       vscode.TreeItemCollapsibleState.Collapsed,
@@ -139,7 +138,6 @@ export function convertDatabaseInfoToDatabaseExplorerItem(
     databaseInfo.name,
     folderTreeItems,
     databaseInfo.databaseId,
-    databaseInfo.path,
     databaseInfo.dialect
   );
 }

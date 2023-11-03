@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { generateSql } from "./command/generateSql";
 import { DatabaseInfoManager } from "./database/DatabaseInfoManager";
-import { addDatabase } from "./command/addDatabase";
 import { DatabaseExplorerTreeViewProvider } from "./view/treeView/DatabaseExplorerTreeViewProvider";
 import { ActiveTableContextTreeViewProvider } from "./view/treeView/ActiveTableContextTreeViewProvider";
 import { QueryHistoryTreeViewProvider } from "./view/treeView/QueryHistoryTreeViewProvider";
@@ -20,6 +19,10 @@ import { clearQueryHistory } from "./command/clearQueryHistory";
 import { removeQueryFromHistory } from "./command/removeQueryFromHistory";
 import { insertQueryIntoEditor } from "./command/insertQueryIntoEditor";
 import { copyQuery } from "./command/copyQuery";
+import {
+  AddDatabasePanelManager,
+  getWebviewOptions,
+} from "./view/webview/AddDatabasePanel";
 
 export function activate(context: vscode.ExtensionContext) {
   const databaseInfoManager = new DatabaseInfoManager(context.workspaceState);
@@ -50,10 +53,30 @@ export function activate(context: vscode.ExtensionContext) {
       queryHistoryTreeViewProvider
     );
 
+  const registerAddDatabaseWebviewPanelSerializer =
+    vscode.window.registerWebviewPanelSerializer("nlq-to-sql.addDatabase", {
+      async deserializeWebviewPanel(
+        webviewPanel: vscode.WebviewPanel,
+        state: any
+      ) {
+        console.log(`Got state: ${state}`); // TODO: DELETE ME
+        // Reset the webview options so we use latest uri for `localResourceRoots`.
+        webviewPanel.webview.options = getWebviewOptions(context.extensionUri);
+        AddDatabasePanelManager.revive(
+          webviewPanel,
+          context.extensionUri,
+          databaseInfoManager
+        );
+      },
+    });
+
   const addDatabaseCommand = vscode.commands.registerCommand(
     "nlq-to-sql.addDatabase",
     async () => {
-      await addDatabase(databaseInfoManager);
+      AddDatabasePanelManager.createOrShow(
+        context.extensionUri,
+        databaseInfoManager
+      );
     }
   );
 
@@ -152,6 +175,7 @@ export function activate(context: vscode.ExtensionContext) {
     registerDatabaseExplorerTreeViewProvider,
     registerActiveTableContextTreeViewProvider,
     registerQueryHistoryTreeViewProvider,
+    registerAddDatabaseWebviewPanelSerializer,
     addDatabaseCommand,
     generateSqlCommand,
     refreshDatabaseExplorerCommand,

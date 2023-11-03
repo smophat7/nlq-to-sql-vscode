@@ -13,8 +13,9 @@ export function convertCreateStatementsToTableInfo(
 ): TableInfo[] {
   let tableInfos: TableInfo[] = [];
   const createTableStatements = createTableStatementsUserInput.split(";");
-  for (const createTableStatement of createTableStatements) {
-    if (createTableStatement.trim() === "") {
+  for (let createTableStatement of createTableStatements) {
+    createTableStatement = createTableStatement.trim();
+    if (createTableStatement === "") {
       continue;
     }
 

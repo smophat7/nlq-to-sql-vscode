@@ -4,7 +4,6 @@
 export type DatabaseInfo = {
   databaseId: string;
   name: string;
-  path: string;
   activeContext?: string;
   tables: TableInfo[];
   dialect: string;

@@ -80,14 +80,16 @@ export class DatabaseInfoManager {
   /**
    * Adds a database to the workspace state and sets it as the active database.
    *
-   * @param filePath The path to the database file.
+   * @param name The name of the database.
    * @param tables Information about the tables in the database. Converted to TableInfo.
+   * @param dialect The SQL dialect of the database.
+   * @returns True if the database was added successfully, false otherwise.
    */
   public async addDatabase(
-    filePath: string,
+    name: string,
     dialect: string,
     tables: TableInfo[]
-  ): Promise<void> {
+  ): Promise<boolean> {
     const tableContext: TableContextInfo = {
       tableContextId: uuidv4(),
       tableContextName: "All Tables",
@@ -96,8 +98,7 @@ export class DatabaseInfoManager {
 
     const database: DatabaseInfo = {
       databaseId: uuidv4(),
-      path: filePath,
-      name: path.basename(filePath),
+      name: name,
       activeContext: tableContext.tableContextId,
       tables: tables,
       dialect: dialect,
@@ -111,6 +112,7 @@ export class DatabaseInfoManager {
     databaseMap.set(database.databaseId, database);
     await this.setDatabases(databaseMap);
     await this.setActiveDatabaseId(database.databaseId);
+    return true;
   }
 
   /**
@@ -163,24 +165,6 @@ export class DatabaseInfoManager {
     vscode.window.showInformationMessage(
       `Removed database with id ${databaseId}.`
     );
-  }
-
-  /**
-   * Returns true if the database exists in the workspace state records based on the path.
-   *
-   * @param selectedDatabasePath
-   * @returns
-   */
-  public getIfDatabaseExists(selectedDatabasePath: string): boolean {
-    const databases = this.getDatabases();
-    if (!databases) {
-      return false;
-    }
-    const databasesArray = Array.from(databases.values());
-    const databaseIndex = databasesArray.findIndex(
-      (database) => database.path === selectedDatabasePath
-    );
-    return databaseIndex !== -1;
   }
 
   /**
