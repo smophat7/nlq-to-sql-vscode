@@ -6,9 +6,8 @@ import { TableInfo } from "../database/DatabaseInfo";
 import { convertCreateStatementsToTableInfo } from "../database/convertCreateStatementsToTableInfo";
 import { SettingsManager } from "../SettingsManager";
 
-// TODO: use constants for error messages?
 /**
- * Asks the user to select a database file and enter create statements for the database,
+ * Asks the user to select a database file and enter the SQL dialect and create statements for the database,
  * then adds the database to the workspace state, sets it as the active database, and refreshes the database explorer.
  *
  * @param databaseInfoManager
@@ -18,6 +17,12 @@ export async function addDatabase(databaseInfoManager: DatabaseInfoManager) {
     databaseInfoManager
   );
   if (!selectedDatabasePath) {
+    return;
+  }
+
+  const dialect = await getDialectUserInput();
+  if (!dialect) {
+    vscode.window.showErrorMessage("No dialect entered.");
     return;
   }
 
@@ -37,7 +42,11 @@ export async function addDatabase(databaseInfoManager: DatabaseInfoManager) {
     return;
   }
 
-  await databaseInfoManager.addDatabase(selectedDatabasePath, tableInfos);
+  await databaseInfoManager.addDatabase(
+    selectedDatabasePath,
+    dialect,
+    tableInfos
+  );
 
   vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
   vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableContext");
@@ -86,6 +95,23 @@ async function getDatabaseUserSelection(
   );
 
   return databasePath?.description;
+}
+
+async function getDialectUserInput(): Promise<string | undefined> {
+  const dialectUserInput = await vscode.window.showInputBox({
+    prompt: "Enter the database dialect",
+    placeHolder: "SQLite, MySQL, PostgreSQL, MariaDB, etc.",
+    validateInput: (input) => {
+      if (!input) {
+        return "No dialect entered";
+      }
+      if (input.split(" ").length > 1) {
+        return "Dialect must be one word";
+      }
+      return "";
+    },
+  });
+  return dialectUserInput;
 }
 
 /**

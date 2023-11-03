@@ -85,6 +85,7 @@ export class DatabaseInfoManager {
    */
   public async addDatabase(
     filePath: string,
+    dialect: string,
     tables: TableInfo[]
   ): Promise<void> {
     const tableContext: TableContextInfo = {
@@ -99,6 +100,7 @@ export class DatabaseInfoManager {
       name: path.basename(filePath),
       activeContext: tableContext.tableContextId,
       tables: tables,
+      dialect: dialect,
       tableContexts: [tableContext],
     };
 
@@ -481,7 +483,7 @@ export class DatabaseInfoManager {
 
     let schema = "";
     activeGroupTables.forEach((table) => {
-      schema += `${table.createStatement}\n`;
+      schema += `${table.createTableStatement}\n`;
     });
     return schema;
   }

@@ -3,7 +3,6 @@ import * as vscode from "vscode";
 import {
   DatabaseInfo,
   TableInfo,
-  AttributeInfo,
   TableContextInfo,
   QueryInfo,
 } from "../database/DatabaseInfo";
@@ -55,15 +54,17 @@ export class DatabaseInfoTreeItem extends DatabaseTreeViewItem {
     label: string,
     children: FolderTreeItem[],
     databaseItemId: string,
-    filePath: string
+    filePath: string,
+    dialect: string
   ) {
+    const tooltip = `Database: ${label}\nFile path: ${filePath}\nDialect: ${dialect}`;
     super(
       label,
       vscode.TreeItemCollapsibleState.Collapsed,
       children,
       databaseItemId,
       new vscode.ThemeIcon(constants.DATABASE_ICON_CODE),
-      filePath
+      tooltip
     );
   }
 }
@@ -88,22 +89,17 @@ export class TableContextTreeItem extends DatabaseTreeViewItem {
 export class TableInfoTreeItem extends DatabaseTreeViewItem {
   constructor(
     label: string,
-    children: AttributeInfoTreeItem[],
-    databaseItemId: string
+    databaseItemId: string,
+    createStatementTooltip: string
   ) {
     super(
       label,
-      vscode.TreeItemCollapsibleState.Collapsed,
-      children,
+      vscode.TreeItemCollapsibleState.None,
+      undefined,
       databaseItemId,
-      new vscode.ThemeIcon(constants.TABLE_ICON_CODE)
+      new vscode.ThemeIcon(constants.TABLE_ICON_CODE),
+      createStatementTooltip
     );
-  }
-}
-
-export class AttributeInfoTreeItem extends DatabaseTreeViewItem {
-  constructor(label: string) {
-    super(label, vscode.TreeItemCollapsibleState.None);
   }
 }
 
@@ -143,7 +139,8 @@ export function convertDatabaseInfoToDatabaseExplorerItem(
     databaseInfo.name,
     folderTreeItems,
     databaseInfo.databaseId,
-    databaseInfo.path
+    databaseInfo.path,
+    databaseInfo.dialect
   );
 }
 
@@ -168,22 +165,10 @@ export function convertTableContextToTableContextTreeItem(
 }
 
 export function convertTableInfoToTableInfoTreeItem(tableInfo: TableInfo): any {
-  const attributeInfos = tableInfo.attributes;
-  const attributeInfoTreeItems = attributeInfos.map((attributeInfo) =>
-    convertAttributeInfoToAttributeInfoTreeItem(attributeInfo)
-  );
   return new TableInfoTreeItem(
     tableInfo.tableName,
-    attributeInfoTreeItems,
-    tableInfo.tableId
-  );
-}
-
-function convertAttributeInfoToAttributeInfoTreeItem(
-  attributeInfo: AttributeInfo
-): any {
-  return new AttributeInfoTreeItem(
-    `${attributeInfo.attributeName}: ${attributeInfo.attributeType}`
+    tableInfo.tableId,
+    tableInfo.createTableStatement
   );
 }
 

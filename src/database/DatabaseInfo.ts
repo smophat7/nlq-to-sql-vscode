@@ -7,6 +7,7 @@ export type DatabaseInfo = {
   path: string;
   activeContext?: string;
   tables: TableInfo[];
+  dialect: string;
   tableContexts: TableContextInfo[]; // TODO: Use map?
 };
 
@@ -16,17 +17,8 @@ export type DatabaseInfo = {
 export interface TableInfo {
   tableId: string;
   tableName: string;
-  createStatement: string;
-  attributes: AttributeInfo[];
+  createTableStatement: string;
   hidden: boolean;
-}
-
-/**
- * Database table attribute information for the extension context.
- */
-export interface AttributeInfo {
-  attributeName: string;
-  attributeType: string;
 }
 
 /**
