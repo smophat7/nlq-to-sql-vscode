@@ -34,17 +34,4 @@ export class SettingsManager {
     }
     return modelId as string;
   }
-
-  /**
-   * @returns Directory names to exclude from searches for database files.
-   */
-  public static getExcludedDirectories(): string[] {
-    const excludedDirectories = this.config.get("excludedDirectories");
-    if (!excludedDirectories) {
-      vscode.window.showErrorMessage(
-        `${constants.EXTENSION_NAME}: No excluded directories set.`
-      );
-    }
-    return excludedDirectories as string[];
-  }
 }

@@ -100,28 +100,6 @@
             "type": "string",
             "default": "gpt-3.5-turbo",
             "order": 2
-          },
-          "nlq-to-sql.excludedDirectories": {
-            "description": "Directories to skip when searching for database files in the workspace.",
-            "type": "array",
-            "default": [
-              ".git",
-              ".vscode",
-              ".idea",
-              "bower_components",
-              "node_modules",
-              "build",
-              "out",
-              "dist",
-              "bin",
-              "tmp",
-              ".DS_Store",
-              "coverage",
-              "results",
-              "logs",
-              "test"
-            ],
-            "order": 3
           }
         }
       }
