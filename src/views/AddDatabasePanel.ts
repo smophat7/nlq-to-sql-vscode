@@ -2,16 +2,7 @@ import * as vscode from "vscode";
 import * as fs from "fs";
 import { addDatabase } from "../database/addDatabase";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import {
-  FORM_ELEMENT_ID,
-  DATABASE_NAME_ELEMENT_ID,
-  SQL_DIALENCT_ELEMENT_ID,
-  CREATE_TABLE_STATEMENTS_ELEMENT_ID,
-  ADD_DATABASE_COMMAND_MESSAGE_CODE,
-  CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER,
-  FORM_SUBMIT_BUTTON_ELEMENT_ID,
-  VALIDATION_MESSAGE_ELEMENT_ID,
-} from "../constants";
+import * as constants from "../constants";
 
 /**
  * Manages AddDatabase webview panels
@@ -94,7 +85,7 @@ export class AddDatabasePanelManager {
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
         switch (message.command) {
-          case ADD_DATABASE_COMMAND_MESSAGE_CODE:
+          case constants.ADD_DATABASE_COMMAND_MESSAGE_CODE:
             const ifAdded = await addDatabase(
               this._databaseInfoManager,
               message.dbName,
@@ -160,12 +151,12 @@ export class AddDatabasePanelManager {
 
   private _getFormHtml(): string {
     return /*html*/ `
-      <form class="form" id="${FORM_ELEMENT_ID}">
-        <vscode-text-field class="input-field" id="${DATABASE_NAME_ELEMENT_ID}">Database Name</vscode-text-field><br />
-        <vscode-text-field class="input-field" id="${SQL_DIALENCT_ELEMENT_ID}" placeholder="SQLite, MySQL, T-SQL, etc.">SQL Dialect</vscode-text-field><br />
-        <vscode-text-area class="input-field" id="${CREATE_TABLE_STATEMENTS_ELEMENT_ID}" rows="22" cols="70" placeholder="${CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER}">CREATE TABLE Statements (semicolon ";" separated)</vscode-text-area><br />
-        <vscode-button type="submit" id="${FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
-        <p class="error-message" id="${VALIDATION_MESSAGE_ELEMENT_ID}">All fields are required.</p>
+      <form class="form" id="${constants.FORM_ELEMENT_ID}">
+        <vscode-text-field class="input-field" id="${constants.DATABASE_NAME_ELEMENT_ID}">Database Name</vscode-text-field><br />
+        <vscode-text-field class="input-field" id="${constants.SQL_DIALENCT_ELEMENT_ID}" placeholder="SQLite, MySQL, T-SQL, etc.">SQL Dialect</vscode-text-field><br />
+        <vscode-text-area class="input-field" id="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_ID}" rows="22" cols="70" placeholder="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER}">CREATE TABLE Statements (semicolon ";" separated)</vscode-text-area><br />
+        <vscode-button type="submit" id="${constants.FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
+        <p class="error-message" id="${constants.VALIDATION_MESSAGE_ELEMENT_ID}">All fields are required.</p>
       </form>
     `;
   }

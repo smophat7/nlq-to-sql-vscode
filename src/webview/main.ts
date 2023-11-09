@@ -7,14 +7,7 @@ import {
   Button,
   TextArea,
 } from "@vscode/webview-ui-toolkit";
-import {
-  DATABASE_NAME_ELEMENT_ID,
-  SQL_DIALENCT_ELEMENT_ID,
-  CREATE_TABLE_STATEMENTS_ELEMENT_ID,
-  ADD_DATABASE_COMMAND_MESSAGE_CODE,
-  FORM_SUBMIT_BUTTON_ELEMENT_ID,
-  VALIDATION_MESSAGE_ELEMENT_ID,
-} from "../constants";
+import * as constants from "../constants";
 
 // Provide limited VS Code API to the webview
 const vscode = acquireVsCodeApi();
@@ -68,7 +61,7 @@ function main() {
   // the form's submit event when clicked. Until that's fixed, we'll call it manually.
   // See the issue at https://github.com/microsoft/vscode-webview-ui-toolkit/issues/395
   const submitButton = document.getElementById(
-    FORM_SUBMIT_BUTTON_ELEMENT_ID
+    constants.FORM_SUBMIT_BUTTON_ELEMENT_ID
   ) as Button;
   submitButton.addEventListener("click", (event) => {
     event.preventDefault();
@@ -113,7 +106,7 @@ function saveState(formElements: FormElements) {
 function handleFormSubmit(formElements: FormElements) {
   {
     const validationMessage = document.getElementById(
-      VALIDATION_MESSAGE_ELEMENT_ID
+      constants.VALIDATION_MESSAGE_ELEMENT_ID
     ) as HTMLParagraphElement;
     if (!validateForm(formElements)) {
       validationMessage.style.display = "block";
@@ -123,7 +116,7 @@ function handleFormSubmit(formElements: FormElements) {
     validationMessage.style.display = "none";
 
     vscode.postMessage({
-      command: ADD_DATABASE_COMMAND_MESSAGE_CODE,
+      command: constants.ADD_DATABASE_COMMAND_MESSAGE_CODE,
       dbName: formElements.dbNameInput.value,
       sqlDialect: formElements.sqlDialectInput.value,
       createTableStatements: formElements.createTableStatementsInput.value,
@@ -152,24 +145,28 @@ function validateForm(formElements: FormElements): boolean {
  */
 function getFormElements(): FormElements {
   const dbNameInput = document.getElementById(
-    DATABASE_NAME_ELEMENT_ID
+    constants.DATABASE_NAME_ELEMENT_ID
   ) as TextField;
   const sqlDialectInput = document.getElementById(
-    SQL_DIALENCT_ELEMENT_ID
+    constants.SQL_DIALENCT_ELEMENT_ID
   ) as TextField;
   const createTableStatementsInput = document.getElementById(
-    CREATE_TABLE_STATEMENTS_ELEMENT_ID
+    constants.CREATE_TABLE_STATEMENTS_ELEMENT_ID
   ) as TextArea;
 
   if (!dbNameInput) {
-    throw new Error(`Input with id ${DATABASE_NAME_ELEMENT_ID} not found`);
+    throw new Error(
+      `Input with id ${constants.DATABASE_NAME_ELEMENT_ID} not found`
+    );
   }
   if (!sqlDialectInput) {
-    throw new Error(`Input with id ${SQL_DIALENCT_ELEMENT_ID} not found`);
+    throw new Error(
+      `Input with id ${constants.SQL_DIALENCT_ELEMENT_ID} not found`
+    );
   }
   if (!createTableStatementsInput) {
     throw new Error(
-      `Input with id ${CREATE_TABLE_STATEMENTS_ELEMENT_ID} not found`
+      `Input with id ${constants.CREATE_TABLE_STATEMENTS_ELEMENT_ID} not found`
     );
   }
   return {
