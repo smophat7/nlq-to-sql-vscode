@@ -96,7 +96,9 @@ async function requestLlmConversion(
     messages: [
       {
         role: "system",
-        content: `Your task is to convert a natural language question into an SQL query for the given database. Note the following:
+        content: `Your task is to convert a natural language question into an SQL query for the given database.
+        Return Only the SQL, not the question or any commentary.
+        Note the following:
           - Use only ${sqlDialect} syntax and features.
           - Use a single SELECT statement.
           - Use indentation to make the output easier to read.
