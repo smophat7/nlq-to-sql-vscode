@@ -90,6 +90,19 @@ export class DatabaseInfoManager {
     dialect: string,
     tables: TableInfo[]
   ): Promise<boolean> {
+    let databaseMap = this.getDatabases();
+    if (!databaseMap) {
+      databaseMap = new Map<string, DatabaseInfo>();
+    }
+    for (const database of databaseMap.values()) {
+      if (database.name === name) {
+        vscode.window.showErrorMessage(
+          `A database with the name ${name} already exists.`
+        );
+        return false;
+      }
+    }
+
     const tableContext: TableContextInfo = {
       tableContextId: uuidv4(),
       tableContextName: "All Tables",
@@ -105,10 +118,6 @@ export class DatabaseInfoManager {
       tableContexts: [tableContext],
     };
 
-    let databaseMap = this.getDatabases();
-    if (!databaseMap) {
-      databaseMap = new Map<string, DatabaseInfo>();
-    }
     databaseMap.set(database.databaseId, database);
     await this.setDatabases(databaseMap);
     await this.setActiveDatabaseId(database.databaseId);
@@ -144,15 +153,13 @@ export class DatabaseInfoManager {
   public async removeDatabase(databaseId: string) {
     let databaseMap = this.getDatabases();
     if (!databaseMap) {
-      vscode.window.showErrorMessage(
-        "Error: No databases found in workspace state."
-      );
+      vscode.window.showErrorMessage("No databases found in workspace state.");
       return;
     }
     const ifExisted = databaseMap.delete(databaseId);
     if (!ifExisted) {
       vscode.window.showErrorMessage(
-        `Error: Could not find database with id ${databaseId}.`
+        `Could not find database with id ${databaseId}.`
       );
       return;
     }
