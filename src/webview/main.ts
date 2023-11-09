@@ -8,7 +8,6 @@ import {
   TextArea,
 } from "@vscode/webview-ui-toolkit";
 import {
-  FORM_ELEMENT_ID,
   DATABASE_NAME_ELEMENT_ID,
   SQL_DIALENCT_ELEMENT_ID,
   CREATE_TABLE_STATEMENTS_ELEMENT_ID,

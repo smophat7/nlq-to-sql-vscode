@@ -411,6 +411,29 @@ export class DatabaseInfoManager {
   }
 
   /**
+   * Returns the SQL dialect of the active table context.
+   */
+  public getActiveGroupSqlDialect(): string {
+    const activeDatabaseId = this.getActiveDatabaseId();
+    if (!activeDatabaseId) {
+      throw new Error("No active database.");
+    }
+    const databaseMap = this.getDatabases();
+    if (!databaseMap) {
+      throw new Error("No databases found in workspace state.");
+    }
+    const activeDatabase: DatabaseInfo | undefined =
+      databaseMap.get(activeDatabaseId);
+    if (!activeDatabase) {
+      throw new Error(
+        "No active database found by workspace state's activeDatabaseId."
+      );
+    }
+
+    return activeDatabase.dialect;
+  }
+
+  /**
    * Returns one string of all the active database's active table context's CREATE statements.
    * Throws an error if there is no active database, active group, or tables in the active group.
    * TODO: Make more fault tolerant.

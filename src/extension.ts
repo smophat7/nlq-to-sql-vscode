@@ -55,11 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const registerAddDatabaseWebviewPanelSerializer =
     vscode.window.registerWebviewPanelSerializer("nlq-to-sql.addDatabase", {
-      async deserializeWebviewPanel(
-        webviewPanel: vscode.WebviewPanel,
-        state: any
-      ) {
-        console.log(`Got state: ${state}`); // TODO: DELETE ME
+      async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel) {
         // Reset the webview options so we use latest uri for `localResourceRoots`.
         webviewPanel.webview.options = getWebviewOptions(context.extensionUri);
         AddDatabasePanelManager.revive(

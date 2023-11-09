@@ -27,6 +27,16 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
     return;
   }
 
+  let sqlDialect: string;
+  try {
+    sqlDialect = databaseInfoManager.getActiveGroupSqlDialect();
+  } catch (error) {
+    vscode.window.showErrorMessage(
+      `Failed to retrieve the SQL dialect of the active table context: ${error}`
+    );
+    return;
+  }
+
   let sql: string | undefined;
   vscode.window.withProgress(
     {
@@ -36,7 +46,11 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
     },
     async () => {
       try {
-        sql = await requestLlmConversion(schema, naturalLanguageQuery);
+        sql = await requestLlmConversion(
+          schema,
+          sqlDialect,
+          naturalLanguageQuery
+        );
         if (!sql) {
           vscode.window.showErrorMessage("Failed to generate SQL.");
           return;
@@ -66,11 +80,13 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
  * TODO: Refactor to use a separate class for LLM API requests.
  *
  * @param schema The schema of the active table context.
+ * @param sqlDialect The SQL dialect of the active table context.
  * @param query The natural language query to convert to SQL.
  * @returns The generated SQL query or undefined if the request failed or the response was undefined.
  */
 async function requestLlmConversion(
   schema: string,
+  sqlDialect: string,
   query: string
 ): Promise<string | undefined> {
   const openai = new OpenAI({
@@ -81,7 +97,7 @@ async function requestLlmConversion(
       {
         role: "system",
         content: `Your task is to convert a natural language question into an SQL query for the given database. Note the following:
-          - Use only sqlite3 syntax and features.
+          - Use only ${sqlDialect} syntax and features.
           - Use a single SELECT statement.
           - Use indentation to make the output easier to read.
           - For the columns, use aliases (<col> "AS" <name>) with proper capitalization to make the output easier to read.
@@ -99,7 +115,7 @@ async function requestLlmConversion(
     ],
     model: SettingsManager.getModelId(),
   });
-  return chatCompletion.choices[0].message.content?.trim(); // TODO: Error handling
+  return chatCompletion.choices[0].message.content?.trim();
 }
 
 /**
