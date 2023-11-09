@@ -10,6 +10,7 @@ import {
   ADD_DATABASE_COMMAND_MESSAGE_CODE,
   CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER,
   FORM_SUBMIT_BUTTON_ELEMENT_ID,
+  VALIDATION_MESSAGE_ELEMENT_ID,
 } from "../constants";
 
 /**
@@ -159,13 +160,14 @@ export class AddDatabasePanelManager {
 
   private _getFormHtml(): string {
     return /*html*/ `
-      <form class="form" id="${FORM_ELEMENT_ID}" onSubmit="handleFormSubmit(event)">
+      <form class="form" id="${FORM_ELEMENT_ID}">
         <vscode-text-field class="input-field" id="${DATABASE_NAME_ELEMENT_ID}">Database Name</vscode-text-field><br />
         <vscode-text-field class="input-field" id="${SQL_DIALENCT_ELEMENT_ID}" placeholder="SQLite, MySQL, T-SQL, etc.">SQL Dialect</vscode-text-field><br />
         <vscode-text-area class="input-field" id="${CREATE_TABLE_STATEMENTS_ELEMENT_ID}" rows="22" cols="70" placeholder="${CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER}">CREATE TABLE Statements (semicolon ";" separated)</vscode-text-area><br />
         <vscode-button type="submit" id="${FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
-        </form>
-        `;
+        <p class="error-message" id="${VALIDATION_MESSAGE_ELEMENT_ID}">All fields are required.</p>
+      </form>
+    `;
   }
 }
 

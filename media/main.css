@@ -5,3 +5,8 @@
 .input-field {
   margin: 10px 0;
 }
+
+.error-message {
+  color: red;
+  display: none;
+}

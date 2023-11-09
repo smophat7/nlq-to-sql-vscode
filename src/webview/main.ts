@@ -14,6 +14,7 @@ import {
   CREATE_TABLE_STATEMENTS_ELEMENT_ID,
   ADD_DATABASE_COMMAND_MESSAGE_CODE,
   FORM_SUBMIT_BUTTON_ELEMENT_ID,
+  VALIDATION_MESSAGE_ELEMENT_ID,
 } from "../constants";
 
 // Provide limited VS Code API to the webview
@@ -28,6 +29,24 @@ provideVSCodeDesignSystem().register(
 
 // Like regular webpages: wait for webview DOM content to load before referencing HTML elements or toolkit components
 window.addEventListener("DOMContentLoaded", main);
+
+/**
+ * The HTML elements of the form.
+ */
+interface FormElements {
+  dbNameInput: TextField;
+  sqlDialectInput: TextField;
+  createTableStatementsInput: TextArea;
+}
+
+/**
+ * The state of the form. Values of the form elements.
+ */
+interface FormState {
+  dbName: string;
+  sqlDialect: string;
+  createTableStatements: string;
+}
 
 /**
  * Main function. Called when the webview DOM content is loaded.
@@ -49,11 +68,10 @@ function main() {
   // There is a known bug where a <vscode-button> element inside a <form> does not trigger
   // the form's submit event when clicked. Until that's fixed, we'll call it manually.
   // See the issue at https://github.com/microsoft/vscode-webview-ui-toolkit/issues/395
-  const button = document.getElementById(
+  const submitButton = document.getElementById(
     FORM_SUBMIT_BUTTON_ELEMENT_ID
   ) as Button;
-  button.addEventListener("click", (event) => {
-    console.log("button clicked"); // TODO: DELETE ME
+  submitButton.addEventListener("click", (event) => {
     event.preventDefault();
     handleFormSubmit(formElements);
   });
@@ -89,12 +107,21 @@ function saveState(formElements: FormElements) {
 
 /**
  * Handle the form submission by sending a message to the extension with the form data.
+ * If the form is invalid, display an error message. Otherwise, ensure its hidden and send the message.
  *
  * @param formElements The elements of the form to get the data from.
  */
 function handleFormSubmit(formElements: FormElements) {
   {
-    console.log("handling event 1"); // TODO: DELETE ME
+    const validationMessage = document.getElementById(
+      VALIDATION_MESSAGE_ELEMENT_ID
+    ) as HTMLParagraphElement;
+    if (!validateForm(formElements)) {
+      validationMessage.style.display = "block";
+      return;
+    }
+
+    validationMessage.style.display = "none";
 
     vscode.postMessage({
       command: ADD_DATABASE_COMMAND_MESSAGE_CODE,
@@ -103,6 +130,20 @@ function handleFormSubmit(formElements: FormElements) {
       createTableStatements: formElements.createTableStatementsInput.value,
     });
   }
+}
+
+/**
+ * Validate the form. No empty fields allowed.
+ *
+ * @param formElements The elements of the form to validate.
+ * @returns True if the form is valid, false otherwise.
+ */
+function validateForm(formElements: FormElements): boolean {
+  return (
+    formElements.dbNameInput.value !== "" &&
+    formElements.sqlDialectInput.value !== "" &&
+    formElements.createTableStatementsInput.value !== ""
+  );
 }
 
 /**
@@ -137,22 +178,4 @@ function getFormElements(): FormElements {
     sqlDialectInput: sqlDialectInput,
     createTableStatementsInput: createTableStatementsInput,
   } as FormElements;
-}
-
-/**
- * The HTML elements of the form.
- */
-interface FormElements {
-  dbNameInput: TextField;
-  sqlDialectInput: TextField;
-  createTableStatementsInput: TextArea;
-}
-
-/**
- * The state of the form. Values of the form elements.
- */
-interface FormState {
-  dbName: string;
-  sqlDialect: string;
-  createTableStatements: string;
 }
