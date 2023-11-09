@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { FolderTreeItem } from "../view/treeView/DatabaseTreeViewItem";
+import { FolderTreeItem } from "../views/DatabaseTreeViewItem";
 
 /**
  * Gets user input for a name for a new table context, creates it, and adds it to the database contexts.

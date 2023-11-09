@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { TableContextTreeItem } from "../view/treeView/DatabaseTreeViewItem";
+import { TableContextTreeItem } from "../views/DatabaseTreeViewItem";
 
 /**
  * Removes a table context from the extension workspace state after user confirmation.

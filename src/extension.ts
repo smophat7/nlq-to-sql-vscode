@@ -1,15 +1,15 @@
 import * as vscode from "vscode";
 import { generateSql } from "./command/generateSql";
 import { DatabaseInfoManager } from "./database/DatabaseInfoManager";
-import { DatabaseExplorerTreeViewProvider } from "./view/treeView/DatabaseExplorerTreeViewProvider";
-import { ActiveTableContextTreeViewProvider } from "./view/treeView/ActiveTableContextTreeViewProvider";
-import { QueryHistoryTreeViewProvider } from "./view/treeView/QueryHistoryTreeViewProvider";
+import { DatabaseExplorerTreeViewProvider } from "./views/DatabaseExplorerTreeViewProvider";
+import { ActiveTableContextTreeViewProvider } from "./views/ActiveTableContextTreeViewProvider";
+import { QueryHistoryTreeViewProvider } from "./views/QueryHistoryTreeViewProvider";
 import {
   DatabaseInfoTreeItem,
   FolderTreeItem,
   QueryInfoTreeItem,
   TableContextTreeItem,
-} from "./view/treeView/DatabaseTreeViewItem";
+} from "./views/DatabaseTreeViewItem";
 import { removeDatabase } from "./command/removeDatabase";
 import { selectTableContext } from "./command/selectTableContext";
 import { addTablesToContext } from "./command/addTablesToContext";
@@ -22,7 +22,7 @@ import { copyQuery } from "./command/copyQuery";
 import {
   AddDatabasePanelManager,
   getWebviewOptions,
-} from "./view/webview/AddDatabasePanel";
+} from "./views/AddDatabasePanel";
 
 export function activate(context: vscode.ExtensionContext) {
   const databaseInfoManager = new DatabaseInfoManager(context.workspaceState);

@@ -4,7 +4,7 @@ import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 import {
   FolderTreeItem,
   TableContextTreeItem,
-} from "../view/treeView/DatabaseTreeViewItem";
+} from "../views/DatabaseTreeViewItem";
 
 /**
  * Gets user input to select tables to add to the selected table context.

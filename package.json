@@ -359,6 +359,8 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@types/vscode-webview": "^1.57.4",
+    "@vscode/webview-ui-toolkit": "^1.2.2",
     "better-sqlite3": "^9.0.0",
     "node-sql-parser": "^4.11.0",
     "openai": "^4.12.3",

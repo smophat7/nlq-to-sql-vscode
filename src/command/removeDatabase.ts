@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { DatabaseInfoTreeItem } from "../view/treeView/DatabaseTreeViewItem";
+import { DatabaseInfoTreeItem } from "../views/DatabaseTreeViewItem";
 
 /**
  * Removes a database from the extension workspace state after user confirmation.

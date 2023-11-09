@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { QueryInfoTreeItem } from "../view/treeView/DatabaseTreeViewItem";
+import { QueryInfoTreeItem } from "../views/DatabaseTreeViewItem";
 
 /**
  * Copies the query to the clipboard.

@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { TableContextTreeItem } from "../view/treeView/DatabaseTreeViewItem";
+import { TableContextTreeItem } from "../views/DatabaseTreeViewItem";
 
 /**
  * Changes the active table context and, if necessary, the active database.

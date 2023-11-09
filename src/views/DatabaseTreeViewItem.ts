@@ -5,8 +5,8 @@ import {
   TableInfo,
   TableContextInfo,
   QueryInfo,
-} from "../../database/DatabaseInfo";
-import * as constants from "../../constants";
+} from "../database/DatabaseInfo";
+import * as constants from "../constants";
 
 // TODO: Clean up and don't duplicate things like id and label
 export class DatabaseTreeViewItem extends vscode.TreeItem {

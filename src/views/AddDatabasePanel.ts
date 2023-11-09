@@ -1,7 +1,16 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
-import { addDatabase } from "../../database/addDatabase";
-import { DatabaseInfoManager } from "../../database/DatabaseInfoManager";
+import { addDatabase } from "../database/addDatabase";
+import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
+import {
+  FORM_ELEMENT_ID,
+  DATABASE_NAME_ELEMENT_ID,
+  SQL_DIALENCT_ELEMENT_ID,
+  CREATE_TABLE_STATEMENTS_ELEMENT_ID,
+  ADD_DATABASE_COMMAND_MESSAGE_CODE,
+  CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER,
+  FORM_SUBMIT_BUTTON_ELEMENT_ID,
+} from "../constants";
 
 /**
  * Manages AddDatabase webview panels
@@ -34,7 +43,7 @@ export class AddDatabasePanelManager {
     }
     const panel = vscode.window.createWebviewPanel(
       AddDatabasePanelManager.viewType,
-      "Add Database",
+      "NLQ-to-SQL: Add Database",
       column || vscode.ViewColumn.One,
       getWebviewOptions(extensionUri)
     );
@@ -84,10 +93,7 @@ export class AddDatabasePanelManager {
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
         switch (message.command) {
-          case "alert":
-            vscode.window.showErrorMessage(message.text);
-            return;
-          case "addDatabase":
+          case ADD_DATABASE_COMMAND_MESSAGE_CODE:
             const ifAdded = await addDatabase(
               this._databaseInfoManager,
               message.dbName,
@@ -103,11 +109,6 @@ export class AddDatabasePanelManager {
       null,
       this._disposables
     );
-  }
-
-  // Send a "refactor" message to the webview (can be any JSON serialiazable data)
-  public doRefactor() {
-    this._panel.webview.postMessage({ command: "refactor" }); // TODO: Get rid of this or use it
   }
 
   public dispose() {
@@ -127,50 +128,44 @@ export class AddDatabasePanelManager {
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "media", "main.js")
+    const webviewUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this._extensionUri, "out", "webview.js")
     );
     const stylesUri = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "media", "main.css")
     );
     const nonce = getNonce(); // To only allow specific scripts to be run
 
-    const bodyHtmlUri = vscode.Uri.joinPath(
-      this._extensionUri,
-      "src",
-      "view",
-      "webview",
-      "AddDatabasePanelBody.html"
-    ); // TODO: Anything but this
-    const bodyHtml = fs.readFileSync(bodyHtmlUri.fsPath, "utf8");
-    return `<!DOCTYPE html>
+    // Use the es6-string-html VS Code extension to enable code highlighting below
+    return /*html*/ `
+      <!DOCTYPE html>
       <html lang="en">
         <head>
           <meta charset="UTF-8" />
-
-          <!--
-					Use a content security policy to only allow loading images from https or from our extension directory,
-					and only allow scripts that have a specific nonce.
-				-->
-          <meta
-            http-equiv="Content-Security-Policy"
-            content="default-src 'none'; style-src ${webview.cspSource}; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}';"
-          />
-
-          <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0"
-          />
-
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${
+            webview.cspSource
+          }; script-src 'nonce-${nonce}';">
           <link href="${stylesUri}" rel="stylesheet" />
-
           <title>Add Database</title>
         </head>
         <body>
-          ${bodyHtml}
-          <script nonce="${nonce}" src="${scriptUri}"></script>
+          ${this._getFormHtml()}
+          <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
         </body>
-      </html>`;
+      </html>
+    `;
+  }
+
+  private _getFormHtml(): string {
+    return /*html*/ `
+      <form class="form" id="${FORM_ELEMENT_ID}" onSubmit="handleFormSubmit(event)">
+        <vscode-text-field class="input-field" id="${DATABASE_NAME_ELEMENT_ID}">Database Name</vscode-text-field><br />
+        <vscode-text-field class="input-field" id="${SQL_DIALENCT_ELEMENT_ID}" placeholder="SQLite, MySQL, T-SQL, etc.">SQL Dialect</vscode-text-field><br />
+        <vscode-text-area class="input-field" id="${CREATE_TABLE_STATEMENTS_ELEMENT_ID}" rows="22" cols="70" placeholder="${CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER}">CREATE TABLE Statements (semicolon ";" separated)</vscode-text-area><br />
+        <vscode-button type="submit" id="${FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
+        </form>
+        `;
   }
 }
 
@@ -189,6 +184,9 @@ export function getWebviewOptions(
 ): vscode.WebviewOptions {
   return {
     enableScripts: true, // Enable javascript in the webview
-    localResourceRoots: [vscode.Uri.joinPath(extensionUri, "media")], // Restrict the webview to only loading content from our extension's `media` directory.
+    localResourceRoots: [
+      vscode.Uri.joinPath(extensionUri, "media"),
+      vscode.Uri.joinPath(extensionUri, "out"),
+    ], // Restrict the webview to only loading content from our extension's `media` and `out` directories.
   };
 }
