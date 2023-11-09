@@ -41,21 +41,14 @@ interface FormState {
 }
 
 /**
- * Main function. Called when the webview DOM content is loaded.
+ * Main function of the AddDatabase webview. Called when the webview DOM content is loaded.
  */
 function main() {
   restoreState();
 
   const formElements = getFormElements();
-  formElements.dbNameInput.addEventListener("input", () =>
-    saveState(formElements)
-  );
-  formElements.sqlDialectInput.addEventListener("input", () =>
-    saveState(formElements)
-  );
-  formElements.createTableStatementsInput.addEventListener("input", () =>
-    saveState(formElements)
-  );
+  addSaveStateListeners(formElements);
+  // addPreventSubmitOnEnterListeners(formElements);
 
   // There is a known bug where a <vscode-button> element inside a <form> does not trigger
   // the form's submit event when clicked. Until that's fixed, we'll call it manually.
@@ -67,6 +60,23 @@ function main() {
     event.preventDefault();
     handleFormSubmit(formElements);
   });
+}
+
+/**
+ * Adds event listeners to save state of the form when the user edits any input elements.
+ *
+ * @param formElements The elements of the form to add the listeners to.
+ */
+function addSaveStateListeners(formElements: FormElements) {
+  formElements.dbNameInput.addEventListener("input", () =>
+    saveState(formElements)
+  );
+  formElements.sqlDialectInput.addEventListener("input", () =>
+    saveState(formElements)
+  );
+  formElements.createTableStatementsInput.addEventListener("input", () =>
+    saveState(formElements)
+  );
 }
 
 /**

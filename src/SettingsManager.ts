@@ -2,7 +2,7 @@ import * as constants from "./constants";
 import * as vscode from "vscode";
 
 /**
- * Controls access to the extension settings in VS Code.
+ * Controls access to the extension's settings in VS Code.
  */
 export class SettingsManager {
   private static config = vscode.workspace.getConfiguration(

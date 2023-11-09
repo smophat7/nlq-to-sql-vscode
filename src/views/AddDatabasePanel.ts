@@ -195,7 +195,7 @@ export class AddDatabasePanelManager {
           <vscode-text-area id="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_ID}" rows="22" cols="70" placeholder="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER}">CREATE TABLE Statements (semicolon ";" separated)</vscode-text-area>
         </section>
         <p class="error-message" id="${constants.VALIDATION_MESSAGE_ELEMENT_ID}">All fields are required.</p>
-        <vscode-button type="submit" id="${constants.FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
+        <vscode-button id="${constants.FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
       </form>
     `;
   }

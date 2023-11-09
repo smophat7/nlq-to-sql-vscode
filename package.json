@@ -147,7 +147,7 @@
         },
         {
           "id": "nlq-to-sql.queryHistory",
-          "name": "Generated Queries"
+          "name": "Generated SQL"
         }
       ]
     },
@@ -191,6 +191,10 @@
         },
         {
           "command": "nlq-to-sql.copyQuery",
+          "when": "false"
+        },
+        {
+          "command": "nlq-to-sql.addTableContext",
           "when": "false"
         }
       ],

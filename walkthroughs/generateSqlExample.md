@@ -16,4 +16,4 @@ GROUP BY p.id
 HAVING COUNT(*) > 5;
 ```
 
-**Note: All AI-generated queries should be checked for correctness before running them on your database.**
+**Note: All AI-generated SQL should be checked for correctness before running them on your database.**
