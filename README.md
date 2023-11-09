@@ -5,7 +5,7 @@ VS Code extension for converting Natural Language Queries to SQL using OpenAI's 
 Users can supply a database schema and a question to convert, and the extension will generate SQL that can be run on the database. Users use their own OpenAI API key and select a model.
 
 > [!WARNING]  
-> **Note: This extension is in beta and is subject to bugs and incomplete features. Please open an issue if you find a bug or have a feature request.**
+> This extension is in beta and is subject to bugs and incomplete features. Please open an issue if you find a bug or have a feature request.
 
 ## Quick Start
 
