@@ -245,73 +245,7 @@
           "group": "inline@2"
         }
       ]
-    },
-    "walkthroughs": [
-      {
-        "id": "nlq-to-sql.getStarted",
-        "title": "Get Started with NLQ-to-SQL",
-        "description": "Configure the extension and a database context to convert English questions into SQL with AI.",
-        "steps": [
-          {
-            "id": "configureApiKeyWalkthroughStep",
-            "title": "Configure OpenAI API Key",
-            "description": "[Get an API key from OpenAI](https://platform.openai.com/account/api-keys) and select a [compatible model](https://platform.openai.com/docs/models/model-endpoint-compatibility) (for ``/chat/completions``).\nYou will be billed according to their pricing and policies.\n[Open NLQ-to-SQL Settings](command:toSide:workbench.action.openSettings?%22nlq-to-sql.%22)",
-            "media": {
-              "image": {
-                "dark": "media/openAi_logo.jpg",
-                "hc": "media/openAi_logo.jpg",
-                "light": "media/openAi_logo.jpg",
-                "hcLight": "media/openAi_logo.jpg"
-              },
-              "altText": "OpenAI logo"
-            },
-            "completionEvents": [
-              "onSettingChanged:nlq-to-sql.modelId",
-              "onSettingsChanged:nlq-to-sql.apiKey"
-            ]
-          },
-          {
-            "id": "addDatabaseWalkthroughStep",
-            "title": "Add a database",
-            "description": "The command below lets you provide information about a database to use as context in SQL generation.\nAfter you run the command and select a reference database, you'll be asked to paste in CREATE statements.\n Run this query first to get the proper input: ``SELECT * FROM sqlite_master WHERE type='table';``\n**Currently only the demonstrated SQLite format to the right is supported.**\nSubsections of these CREATE statements are used in requests to OpenAI, so only provide what you're comfortable sharing with them.\n[Add a database](command:nlq-to-sql.addDatabase)",
-            "media": {
-              "markdown": "walkthroughs/schemaDemo.md"
-            },
-            "completionEvents": [
-              "onCommand:nlq-to-sql.addDatabase"
-            ]
-          },
-          {
-            "id": "treeViewOverviewWalkthroughStep",
-            "title": "Views",
-            "description": "The NLQ-to-SQL sidebar makes it easy to control what database info is used to generate SQL.\nOnly table schemas in the **Active Table Context** will be used as context and sent to OpenAI.\n[Open sidebar](command:workbench.view.extension.nlq-to-sql)",
-            "media": {
-              "image": {
-                "dark": "media/tree_view_demo.png",
-                "hc": "media/tree_view_demo.png",
-                "light": "media/tree_view_demo.png",
-                "hcLight": "media/tree_view_demo.png"
-              },
-              "altText": "OpenAI logo"
-            },
-            "completionEvents": [
-              "onView:nlq-to-sql.activeTableContext"
-            ]
-          },
-          {
-            "id": "generateSqlWalkthroughStep",
-            "title": "Generate SQL",
-            "description": "Ask a question and have it answered with AI-generated SQL. This is designed specifically to generate SELECT statements.\n[Generate SQL](command:nlq-to-sql.generateSql)",
-            "media": {
-              "markdown": "walkthroughs/generateSqlExample.md"
-            },
-            "completionEvents": [
-              "onCommand:nlq-to-sql.generateSql"
-            ]
-          }
-        ]
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
