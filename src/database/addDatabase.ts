@@ -37,6 +37,9 @@ export async function addDatabase(
   if (ifAdded) {
     vscode.commands.executeCommand("nlq-to-sql.refreshDatabaseExplorer");
     vscode.commands.executeCommand("nlq-to-sql.refreshActiveTableContext");
+    vscode.window.showInformationMessage(
+      `Successfully added database ${databaseName}.`
+    );
   }
   return ifAdded;
 }

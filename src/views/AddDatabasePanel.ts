@@ -36,7 +36,10 @@ export class AddDatabasePanelManager {
     const panel = vscode.window.createWebviewPanel(
       AddDatabasePanelManager.viewType,
       "NLQ-to-SQL: Add Database",
-      column || vscode.ViewColumn.One,
+      {
+        viewColumn: vscode.ViewColumn.Two,
+        preserveFocus: true,
+      },
       getWebviewOptions(extensionUri)
     );
     AddDatabasePanelManager.currentPanel = new AddDatabasePanelManager(
@@ -142,7 +145,10 @@ export class AddDatabasePanelManager {
           <title>Add Database</title>
         </head>
         <body>
-          ${this._getFormHtml()}
+          <div class="body-content">
+            <h1>NLQ-to-SQL: Add Database</h1>
+            ${this._getFormHtml()}
+          </div>
           <script type="module" nonce="${nonce}" src="${webviewUri}"></script>
         </body>
       </html>
@@ -151,12 +157,45 @@ export class AddDatabasePanelManager {
 
   private _getFormHtml(): string {
     return /*html*/ `
-      <form class="form" id="${constants.FORM_ELEMENT_ID}">
-        <vscode-text-field class="input-field" id="${constants.DATABASE_NAME_ELEMENT_ID}">Database Name</vscode-text-field><br />
-        <vscode-text-field class="input-field" id="${constants.SQL_DIALENCT_ELEMENT_ID}" placeholder="SQLite, MySQL, T-SQL, etc.">SQL Dialect</vscode-text-field><br />
-        <vscode-text-area class="input-field" id="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_ID}" rows="22" cols="70" placeholder="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER}">CREATE TABLE Statements (semicolon ";" separated)</vscode-text-area><br />
-        <vscode-button type="submit" id="${constants.FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
+      <form id="${constants.FORM_ELEMENT_ID}">
+        <section class="input-section">
+          <h2>Database Name</h2>
+          <p>Keep it short and sweet. This will be displayed in the NLQ-to-SQL sidebar.</p>
+          <vscode-text-field id="${constants.DATABASE_NAME_ELEMENT_ID}">Database Name</vscode-text-field>
+        </section>
+        <section class="input-section">
+          <h2>SQL Dialect</h2>
+          <p>
+            This value will be used in the prompt for the LLM API to specify what syntax/features its generated SQL should use.
+            Provide whatever dialect/flavor/vendor/version of SQL your database uses in the format that will be the most helpful to the LLM.
+          </p>
+          <vscode-text-field id="${constants.SQL_DIALENCT_ELEMENT_ID}" placeholder="SQLite, MySQL, T-SQL, etc.">SQL Dialect</vscode-text-field>
+        </section>
+        <section class="input-section">
+          <h2>CREATE TABLE Statements</h2>
+          <p>
+            To generate more accurate SQL, the LLM must have some sense of the database schema. You can use a simple query on your database
+            to get the <code>CREATE TABLE</code> statements for your database, which you can then paste here. The specific format
+            isn't all that important, except they must be valid <code>CREATE TABLE</code> statements, and they must be separated by semicolons.
+          </p>
+          <p>
+            For example, to easily get the <code>CREATE TABLE</code> statements for an SQLite database, you can do one of the following
+            (similar methods exist for other databases):
+          </p>
+          <ul>
+            <li>Run <code>sqlite3 &lt;database file&gt; .schema</code> in a terminal</li>
+            <li>Execute the following query in a SQL client: <code>SELECT sql FROM sqlite_master WHERE type = 'table';</code></li>
+          </ul>
+          <p>Similar methods exist for other databases.</p>
+          <p><strong>NOTE: Only provide the <code>CREATE TABLE</code> statements you are comfortable sending to OpenAI.</strong></p>
+          <p>
+            After you connect this database, you can create smaller groups of these tables in the NLQ-to-SQL sidebar as table "Contexts".
+            This way, you can send a more limited subset of relevant <code>CREATE TABLE</code> statements to OpenAI to limit the cost of the request.
+          </p>
+          <vscode-text-area id="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_ID}" rows="22" cols="70" placeholder="${constants.CREATE_TABLE_STATEMENTS_ELEMENT_PLACEHOLDER}">CREATE TABLE Statements (semicolon ";" separated)</vscode-text-area>
+        </section>
         <p class="error-message" id="${constants.VALIDATION_MESSAGE_ELEMENT_ID}">All fields are required.</p>
+        <vscode-button type="submit" id="${constants.FORM_SUBMIT_BUTTON_ELEMENT_ID}">Add Database</vscode-button>
       </form>
     `;
   }
