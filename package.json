@@ -1,8 +1,8 @@
 {
   "name": "nlq-to-sql",
-  "displayName": "NLQ-to-SQL",
-  "publisher": "SpencerMoffat",
-  "description": "Convert Natural Language Queries to SQL using LLM APIs",
+  "displayName": "NLQ-to-SQL: AI Generated SQL from Natural Language Queries",
+  "publisher": "smophat7",
+  "description": "Convert Natural Language Queries to SQL using the OpenAI's LLM APIs",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.83.0"
@@ -10,6 +10,7 @@
   "categories": [
     "Other"
   ],
+  "icon": "media/icon-color-500x500.png",
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -109,7 +110,7 @@
         {
           "id": "nlq-to-sql",
           "title": "NLQ-to-SQL",
-          "icon": "$(database)"
+          "icon": "media/icon-bw-24x24.svg"
         }
       ]
     },
