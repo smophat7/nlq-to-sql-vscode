@@ -1,16 +1,16 @@
 import * as vscode from "vscode";
 
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import { FolderTreeItem } from "../views/DatabaseTreeViewItem";
+import { ContextsFolderTreeItem } from "../views/DatabaseTreeViewItem";
 
 /**
  * Gets user input for a name for a new table context, creates it, and adds it to the database contexts.
  *
- * @param folderTreeItem The tree item of the folder whose database to add the table context to.
+ * @param folderTreeItem The tree item of the contexts folder whose database to add the table context to.
  * @param databaseInfoManager
  */
 export async function addTableContext(
-  folderTreeItem: FolderTreeItem,
+  folderTreeItem: ContextsFolderTreeItem,
   databaseInfoManager: DatabaseInfoManager
 ) {
   const databases = databaseInfoManager.getDatabases();

@@ -1,10 +1,7 @@
 import * as vscode from "vscode";
 
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
-import {
-  FolderTreeItem,
-  TableContextTreeItem,
-} from "../views/DatabaseTreeViewItem";
+import { TableContextTreeItem } from "../views/DatabaseTreeViewItem";
 
 /**
  * Gets user input to select tables to add to the selected table context.

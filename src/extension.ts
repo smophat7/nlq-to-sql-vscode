@@ -5,8 +5,8 @@ import { DatabaseExplorerTreeViewProvider } from "./views/DatabaseExplorerTreeVi
 import { ActiveTableContextTreeViewProvider } from "./views/ActiveTableContextTreeViewProvider";
 import { QueryHistoryTreeViewProvider } from "./views/QueryHistoryTreeViewProvider";
 import {
+  ContextsFolderTreeItem,
   DatabaseInfoTreeItem,
-  FolderTreeItem,
   QueryInfoTreeItem,
   TableContextTreeItem,
 } from "./views/DatabaseTreeViewItem";
@@ -127,8 +127,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   const addTableContextCommand = vscode.commands.registerCommand(
     "nlq-to-sql.addTableContext",
-    async (folderTreeItem: FolderTreeItem) => {
-      await addTableContext(folderTreeItem, databaseInfoManager);
+    async (contextsFolderTreeItem: ContextsFolderTreeItem) => {
+      await addTableContext(contextsFolderTreeItem, databaseInfoManager);
     }
   );
 

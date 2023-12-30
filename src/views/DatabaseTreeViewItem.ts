@@ -8,104 +8,99 @@ import {
 } from "../database/DatabaseInfo";
 import * as constants from "../constants";
 
-// TODO: Clean up and don't duplicate things like id and label
 export class DatabaseTreeViewItem extends vscode.TreeItem {
   public databaseItemId?: string;
-  public children?: DatabaseTreeViewItem[] = [];
+  children: DatabaseTreeViewItem[] | undefined;
 
   constructor(
     label: string,
-    collapsibleState: vscode.TreeItemCollapsibleState,
-    children?: DatabaseTreeViewItem[],
     databaseItemId?: string,
-    themeIcon?: vscode.ThemeIcon | undefined,
-    tooltip?: string
+    children?: DatabaseTreeViewItem[]
   ) {
-    super(label, collapsibleState);
-    this.label = label;
-    this.children = children;
+    super(label);
     this.databaseItemId = databaseItemId;
-    this.iconPath = themeIcon;
-    this.tooltip = tooltip;
+    this.children = children;
   }
 }
 
-export class FolderTreeItem extends DatabaseTreeViewItem {
+export class TablesFolderTreeItem extends DatabaseTreeViewItem {
+  contextValue = "tablesFolder";
+  iconPath = new vscode.ThemeIcon(constants.FOLDER_ICON_CODE);
+  collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+
   constructor(
     label: string,
-    children: TableInfoTreeItem[] | TableContextTreeItem[],
     databaseId: string,
-    contextValue: string
+    children: TableInfoTreeItem[]
   ) {
-    super(
-      label,
-      vscode.TreeItemCollapsibleState.Collapsed,
-      children,
-      databaseId, // In a FolderTreeItem, the databaseItemId is the database id to which the folder belongs
-      new vscode.ThemeIcon(constants.FOLDER_ICON_CODE)
-    );
-    this.contextValue = contextValue;
+    super(label, databaseId, children);
+  }
+}
+
+export class ContextsFolderTreeItem extends DatabaseTreeViewItem {
+  contextValue = "contextsFolder";
+  iconPath = new vscode.ThemeIcon(constants.FOLDER_ICON_CODE);
+  collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+
+  constructor(
+    label: string,
+    databaseId: string,
+    children: TableContextTreeItem[]
+  ) {
+    super(label, databaseId, children);
   }
 }
 
 export class DatabaseInfoTreeItem extends DatabaseTreeViewItem {
   contextValue = "databaseInfo";
+  iconPath = new vscode.ThemeIcon(constants.DATABASE_ICON_CODE);
+  collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+
   constructor(
     label: string,
-    children: FolderTreeItem[],
+    children: (TablesFolderTreeItem | ContextsFolderTreeItem)[],
     databaseItemId: string,
     dialect: string
   ) {
-    const tooltip = `Database: ${label}\nDialect: ${dialect}`;
-    super(
-      label,
-      vscode.TreeItemCollapsibleState.Collapsed,
-      children,
-      databaseItemId,
-      new vscode.ThemeIcon(constants.DATABASE_ICON_CODE),
-      tooltip
-    );
+    super(label, databaseItemId, children);
+    this.tooltip = `Database: ${label}\nDialect: ${dialect}`;
   }
 }
 
 export class TableContextTreeItem extends DatabaseTreeViewItem {
   contextValue = "tableContext";
+  iconPath = new vscode.ThemeIcon(constants.TABLE_GROUP_ICON_CODE);
+  collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+
   constructor(
     label: string,
-    children: TableInfoTreeItem[],
-    databaseItemId: string
+    databaseItemId: string,
+    children: TableInfoTreeItem[]
   ) {
-    super(
-      label,
-      vscode.TreeItemCollapsibleState.Collapsed,
-      children,
-      databaseItemId,
-      new vscode.ThemeIcon(constants.TABLE_GROUP_ICON_CODE)
-    );
+    super(label, databaseItemId, children);
   }
 }
 
 export class TableInfoTreeItem extends DatabaseTreeViewItem {
+  iconPath = new vscode.ThemeIcon(constants.TABLE_ICON_CODE);
+  collapsibleState = vscode.TreeItemCollapsibleState.None;
+
   constructor(
     label: string,
     databaseItemId: string,
     createStatementTooltip: string
   ) {
-    super(
-      label,
-      vscode.TreeItemCollapsibleState.None,
-      undefined,
-      databaseItemId,
-      new vscode.ThemeIcon(constants.TABLE_ICON_CODE),
-      createStatementTooltip
-    );
+    super(label, databaseItemId);
+    this.tooltip = createStatementTooltip;
   }
 }
 
 export class QueryInfoTreeItem extends DatabaseTreeViewItem {
   contextValue = "queryInfo";
+  collapsibleState = vscode.TreeItemCollapsibleState.None;
+
   constructor(label: string, queryId: string) {
-    super(label, vscode.TreeItemCollapsibleState.None, undefined, queryId);
+    super(label, queryId);
   }
 }
 
@@ -120,18 +115,16 @@ export function convertDatabaseInfoToDatabaseExplorerItem(
   const tableContextTreeItems = tableContexts.map((tableContext) =>
     convertTableContextToTableContextTreeItem(tableContext, tableInfoTreeItems)
   );
-  let folderTreeItems: FolderTreeItem[] = [
-    new FolderTreeItem(
+  let folderTreeItems: (TablesFolderTreeItem | ContextsFolderTreeItem)[] = [
+    new TablesFolderTreeItem(
       "Tables",
-      tableInfoTreeItems,
       databaseInfo.databaseId,
-      "tablesFolder"
+      tableInfoTreeItems
     ),
-    new FolderTreeItem(
+    new ContextsFolderTreeItem(
       "Contexts",
-      tableContextTreeItems,
       databaseInfo.databaseId,
-      "contextsFolder"
+      tableContextTreeItems
     ),
   ];
   return new DatabaseInfoTreeItem(
@@ -157,8 +150,8 @@ export function convertTableContextToTableContextTreeItem(
   });
   return new TableContextTreeItem(
     tableContext.tableContextName,
-    tableInfoTreeItemsInTableContext,
-    tableContext.tableContextId
+    tableContext.tableContextId,
+    tableInfoTreeItemsInTableContext
   );
 }
 
