@@ -1,16 +1,32 @@
 {
   "name": "nlq-to-sql",
-  "displayName": "NLQ-to-SQL: AI Generated SQL from Natural Language Queries",
+  "displayName": "NLQ-to-SQL: AI-Generated SQL from Natural Language Queries",
   "publisher": "smophat7",
-  "description": "Convert Natural Language Queries to SQL using the OpenAI's LLM APIs",
+  "description": "Convert Natural Language Queries to SQL using OpenAI's LLM APIs",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.83.0"
   },
   "categories": [
+    "Data Science",
     "Other"
   ],
+  "keywords": [
+    "ai",
+    "sql",
+    "nlq",
+    "openai",
+    "code completion",
+    "code generation"
+  ],
   "icon": "media/icon-color-500x500.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smophat7/nlq-sql-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/smophat7/nlq-sql-vscode/issues"
+  },
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -47,7 +63,7 @@
       },
       {
         "command": "nlq-to-sql.selectTableContext",
-        "title": "Select Table Context",
+        "title": "Set as Active Table Context",
         "icon": "$(star)"
       },
       {
