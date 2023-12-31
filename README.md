@@ -10,7 +10,7 @@ Users can supply a database schema and a question to convert, and the extension 
 ## Quick Start
 
 1. Install [VS Code](https://code.visualstudio.com/)
-2. Install this [NLQ-to-SQL extension](TODO)
+2. Install this [NLQ-to-SQL extension](https://marketplace.visualstudio.com/items?itemName=smophat7.nlq-to-sql)
 3. Get an [OpenAI API key](https://beta.openai.com/account/api-keys)
 4. Go the the extension's settings, enter your API key, and select a model.
 5. Use the `NLQ-to-SQL: Add Database` command to add a database to the extension
