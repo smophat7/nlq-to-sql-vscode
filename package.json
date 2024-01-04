@@ -87,7 +87,7 @@
       },
       {
         "command": "nlq-to-sql.insertQuery",
-        "title": "Insert Query",
+        "title": "Insert Query into Editor",
         "icon": "$(insert)"
       },
       {

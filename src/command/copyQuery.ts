@@ -20,6 +20,6 @@ export async function copyQuery(
   }
 
   const queryInfo = await databaseInfoManager.getQueryInfo(queryId);
-  await vscode.env.clipboard.writeText(queryInfo.query);
+  await vscode.env.clipboard.writeText(`-- ${queryInfo.nlq}\n${queryInfo.sql}`);
   vscode.window.showInformationMessage(`Copied query to clipboard`);
 }

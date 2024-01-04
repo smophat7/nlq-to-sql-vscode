@@ -99,8 +99,8 @@ export class QueryInfoTreeItem extends DatabaseTreeViewItem {
   contextValue = "queryInfo";
   collapsibleState = vscode.TreeItemCollapsibleState.None;
 
-  constructor(label: string, queryId: string) {
-    super(label, queryId);
+  constructor(sql: string, nlq: string, queryId: string) {
+    super(`${nlq}\n...\n${sql}`, queryId);
   }
 }
 
@@ -164,5 +164,5 @@ export function convertTableInfoToTableInfoTreeItem(tableInfo: TableInfo): any {
 }
 
 export function convertQueryInfoToQueryInfoTreeItem(queryInfo: QueryInfo) {
-  return new QueryInfoTreeItem(queryInfo.query, queryInfo.queryId);
+  return new QueryInfoTreeItem(queryInfo.sql, queryInfo.nlq, queryInfo.queryId);
 }

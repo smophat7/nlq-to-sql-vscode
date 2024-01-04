@@ -350,9 +350,10 @@ export class DatabaseInfoManager {
   /**
    * Adds a query to the query history.
    *
-   * @param query The query to add to the query history.
+   * @param sql The sql to add to the query history.
+   * @param nlq The natural language query that was converted to the sql.
    */
-  async addQueryToHistory(query: string) {
+  async addQueryToHistory(sql: string, nlq: string) {
     let queryHistory = this.getQueryHistory();
     if (!queryHistory) {
       queryHistory = new Map<string, QueryInfo>();
@@ -360,7 +361,8 @@ export class DatabaseInfoManager {
 
     const queryInfo: QueryInfo = {
       queryId: uuidv4(),
-      query: query,
+      sql: sql,
+      nlq: nlq,
       dateUtc: new Date(),
     };
 

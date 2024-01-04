@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import OpenAI from "openai";
 import { SettingsManager } from "../SettingsManager";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
+import { insertIntoEditor } from "../helpers/insertIntoEditor";
 
 /**
  * Generates an SQL query from the user's natural language query, inserting it into the active editor
@@ -11,8 +12,8 @@ import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
  * @returns
  */
 export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
-  const naturalLanguageQuery = await getUserQuery();
-  if (!naturalLanguageQuery) {
+  const nlq = await getUserNaturalLanguageQuery();
+  if (!nlq) {
     vscode.window.showErrorMessage("Query cannot be empty.");
     return;
   }
@@ -46,11 +47,7 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
     },
     async () => {
       try {
-        sql = await requestLlmConversion(
-          schema,
-          sqlDialect,
-          naturalLanguageQuery
-        );
+        sql = await requestLlmConversion(schema, sqlDialect, nlq);
         if (!sql) {
           vscode.window.showErrorMessage("Failed to generate SQL.");
           return;
@@ -64,9 +61,9 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
             viewColumn: vscode.ViewColumn.Beside,
           });
         }
-
-        insertSqlIntoEditor(editor, sql);
-        await databaseInfoManager.addQueryToHistory(sql);
+        const sqlWithComment = `-- ${nlq}\n${sql}`;
+        insertIntoEditor(editor, sqlWithComment);
+        await databaseInfoManager.addQueryToHistory(sql, nlq);
         vscode.commands.executeCommand("nlq-to-sql.refreshQueryHistory");
       } catch (error) {
         vscode.window.showErrorMessage(`Error generating SQL: ${error}`);
@@ -133,23 +130,11 @@ async function requestLlmConversion(
 }
 
 /**
- * Inserts the given SQL into the given editor.
- *
- * @param editor
- * @param sql
- */
-function insertSqlIntoEditor(editor: vscode.TextEditor, sql: string) {
-  editor.edit((editBuilder) => {
-    editBuilder.insert(editor.selection.active, sql);
-  });
-}
-
-/**
  * Asks the user to enter a natural language query.
  *
  * @returns The user's natural language query.
  */
-async function getUserQuery(): Promise<string | undefined> {
+async function getUserNaturalLanguageQuery(): Promise<string | undefined> {
   const userInput = await vscode.window.showInputBox({
     prompt: "Enter a natural language query for which to generate SQL.",
     validateInput: (text) => {

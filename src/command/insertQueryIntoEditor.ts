@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { DatabaseInfoManager } from "../database/DatabaseInfoManager";
 import { QueryInfoTreeItem } from "../views/DatabaseTreeViewItem";
+import { insertIntoEditor } from "../helpers/insertIntoEditor";
 
 /**
  * Inserts the query into the active editor at the current cursor position.
@@ -25,7 +26,6 @@ export function insertQueryIntoEditor(
   }
 
   const queryInfo = databaseInfoManager.getQueryInfo(queryId);
-  editor.edit((editBuilder) => {
-    editBuilder.insert(editor.selection.active, queryInfo.query);
-  });
+  const text = `-- ${queryInfo.nlq}\n${queryInfo.sql}`;
+  insertIntoEditor(editor, text);
 }
