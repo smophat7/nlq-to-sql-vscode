@@ -95,6 +95,8 @@ async function requestLlmConversion(
   if (!apiKey || !modelId) {
     return; // Errors handled in SettingsManager.
   }
+  const temperature = SettingsManager.getTemperature();
+  const maxTokens = SettingsManager.getMaxTokens();
 
   const openai = new OpenAI({
     apiKey: apiKey,
@@ -123,6 +125,9 @@ async function requestLlmConversion(
       },
     ],
     model: modelId,
+    temperature: temperature,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    max_tokens: maxTokens,
   });
   return chatCompletion.choices[0].message.content?.trim();
 }

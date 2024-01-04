@@ -9,13 +9,18 @@ export class SettingsManager {
   private static extensionGlobalState: vscode.Memento;
   private static readonly openaiApiKeyKey = "openaiApiKey";
   private static readonly modelId = "modelId";
-
-  private static config = vscode.workspace.getConfiguration(
-    constants.EXTENSION_ID
-  );
+  private static readonly maxTokens = "maxTokens";
+  private static readonly temperature = "temperature";
 
   public static initialize(context: vscode.ExtensionContext) {
     SettingsManager.extensionGlobalState = context.globalState;
+  }
+
+  /**
+   * @returns The extension's VS Code configuration.
+   */
+  private static get config() {
+    return vscode.workspace.getConfiguration(constants.EXTENSION_ID);
   }
 
   /**
@@ -56,5 +61,19 @@ export class SettingsManager {
       return undefined;
     }
     return modelId as string;
+  }
+
+  /**
+   * @returns The maximum number of tokens to generate in a single completion from the OpenAI API. Null if not set, which uses the OpenAI default.
+   */
+  public static getMaxTokens(): number | null {
+    return this.config.get(this.maxTokens) ?? null;
+  }
+
+  /**
+   * @returns The temperature to use when sampling from the OpenAI API. Null if not set, which uses the OpenAI default.
+   */
+  public static getTemperature(): number | null {
+    return this.config.get(this.temperature) ?? null;
   }
 }

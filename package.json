@@ -115,6 +115,24 @@
             "type": "string",
             "default": "gpt-3.5-turbo",
             "order": 1
+          },
+          "nlq-to-sql.maxTokens": {
+            "description": "Maximum number of tokens to generate in a single completion. The total length of input tokens and generated tokens is limited by the model's context length. If left blank here, it will be left blank in the API request and use OpenAI's defaults.",
+            "type": [
+              "number",
+              "null"
+            ],
+            "default": null,
+            "order": 2
+          },
+          "nlq-to-sql.temperature": {
+            "description": "What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If left blank here, it will be left blank in the API request and use OpenAI's defaults.",
+            "type": [
+              "number",
+              "null"
+            ],
+            "default": null,
+            "order": 3
           }
         }
       }
