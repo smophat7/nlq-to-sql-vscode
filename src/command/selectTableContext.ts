@@ -33,9 +33,6 @@ export async function selectTableContext(
       tableContextId,
       databaseId
     );
-    vscode.window.showInformationMessage(
-      `Selected table context ${tableContextTreeItem.label} and database ${databaseId}`
-    );
   } catch (error) {
     vscode.window.showErrorMessage(
       `Failed to set active table context: ${error}`
