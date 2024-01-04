@@ -37,6 +37,10 @@
         "when": "editorHasSelection"
       },
       {
+        "command": "nlq-to-sql.setApiKey",
+        "title": "NLQ-to-SQL: Set API Key"
+      },
+      {
         "command": "nlq-to-sql.addDatabase",
         "title": "NLQ-to-SQL: Add Database",
         "icon": "$(add)"
@@ -106,17 +110,11 @@
       {
         "title": "NLQ-to-SQL",
         "properties": {
-          "nlq-to-sql.apiKey": {
-            "markdownDescription": "OpenAI API Key. Create an account and get an API key [here](https://platform.openai.com/account/api-keys). You will be billed according to their pricing and policies.",
-            "type": "string",
-            "default": "",
-            "order": 1
-          },
           "nlq-to-sql.modelId": {
             "markdownDescription": "OpenAI Model ID compatible with the `/chat/completions` endpoint (see their [docs](https://platform.openai.com/docs/models/model-endpoint-compatibility)). Format like \"gpt-3.5-turbo\" or \"gpt-4-32k\".",
             "type": "string",
             "default": "gpt-3.5-turbo",
-            "order": 2
+            "order": 1
           }
         }
       }

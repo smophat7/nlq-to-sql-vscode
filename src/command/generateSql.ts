@@ -77,6 +77,7 @@ export async function generateSql(databaseInfoManager: DatabaseInfoManager) {
 
 /**
  * Requests an SQL query from the OpenAI API using the given natural language.
+ * Gets the API key from the global state or prompts the user to enter it if it is not set.
  * TODO: Refactor to use a separate class for LLM API requests.
  *
  * @param schema The schema of the active table context.
@@ -89,8 +90,14 @@ async function requestLlmConversion(
   sqlDialect: string,
   query: string
 ): Promise<string | undefined> {
+  const apiKey = await SettingsManager.getOpenAIApiKey();
+  const modelId = SettingsManager.getModelId();
+  if (!apiKey || !modelId) {
+    return; // Errors handled in SettingsManager.
+  }
+
   const openai = new OpenAI({
-    apiKey: SettingsManager.getApiKey(),
+    apiKey: apiKey,
   });
   const chatCompletion = await openai.chat.completions.create({
     messages: [
@@ -115,7 +122,7 @@ async function requestLlmConversion(
         content: `Natural language question to convert to SQL: ${query}`,
       },
     ],
-    model: SettingsManager.getModelId(),
+    model: modelId,
   });
   return chatCompletion.choices[0].message.content?.trim();
 }

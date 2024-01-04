@@ -23,8 +23,11 @@ import {
   AddDatabasePanelManager,
   getWebviewOptions,
 } from "./views/AddDatabasePanel";
+import { SettingsManager } from "./SettingsManager";
+import { setApiKey } from "./command/setApiKey";
 
 export function activate(context: vscode.ExtensionContext) {
+  SettingsManager.initialize(context);
   const databaseInfoManager = new DatabaseInfoManager(context.workspaceState);
   const databaseExplorerTreeViewProvider = new DatabaseExplorerTreeViewProvider(
     databaseInfoManager
@@ -65,6 +68,13 @@ export function activate(context: vscode.ExtensionContext) {
         );
       },
     });
+
+  const setApiKeyCommand = vscode.commands.registerCommand(
+    "nlq-to-sql.setApiKey",
+    async () => {
+      await setApiKey();
+    }
+  );
 
   const addDatabaseCommand = vscode.commands.registerCommand(
     "nlq-to-sql.addDatabase",
@@ -172,6 +182,7 @@ export function activate(context: vscode.ExtensionContext) {
     registerActiveTableContextTreeViewProvider,
     registerQueryHistoryTreeViewProvider,
     registerAddDatabaseWebviewPanelSerializer,
+    setApiKeyCommand,
     addDatabaseCommand,
     generateSqlCommand,
     refreshDatabaseExplorerCommand,
