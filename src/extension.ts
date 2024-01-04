@@ -19,12 +19,12 @@ import { clearQueryHistory } from "./command/clearQueryHistory";
 import { removeQueryFromHistory } from "./command/removeQueryFromHistory";
 import { insertQueryIntoEditor } from "./command/insertQueryIntoEditor";
 import { copyQuery } from "./command/copyQuery";
+import { setApiKey } from "./command/setApiKey";
 import {
   AddDatabasePanelManager,
   getWebviewOptions,
 } from "./views/AddDatabasePanel";
 import { SettingsManager } from "./SettingsManager";
-import { setApiKey } from "./command/setApiKey";
 
 export function activate(context: vscode.ExtensionContext) {
   SettingsManager.initialize(context);
